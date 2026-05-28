@@ -26,6 +26,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, var(--cream) 0%, var(--lavender) 50%, var(--rose) 100%);
@@ -843,28 +847,42 @@
         }
 
         @media (max-width: 600px) {
-            .app-title { font-size: 1.5rem; }
-            .app-subtitle { font-size: 0.85rem; }
-            .app-header { padding: 15px 15px 10px; }
+            .app-title { font-size: 1.4rem; }
+            .app-subtitle { font-size: 0.8rem; }
+            .app-header { padding: 12px 12px 8px; }
             .gift-text { font-size: 1.5rem; }
             .gift-box { width: 140px; height: 140px; }
             .gift-emoji { font-size: 100px; }
-            .card { padding: 18px; margin-bottom: 14px; border-radius: 16px; }
-            .card-title { font-size: 1.15rem; }
-            .chip { padding: 8px 14px; font-size: 0.85rem; }
-            .nav-tab { padding: 7px 12px; font-size: 0.8rem; }
-            .nav-tabs { gap: 6px; padding: 0 10px 12px; }
+            .card { padding: 14px; margin-bottom: 12px; border-radius: 14px; }
+            .card-title { font-size: 1.1rem; }
+            .chip { padding: 7px 12px; font-size: 0.82rem; }
+            .nav-tab { padding: 6px 10px; font-size: 0.75rem; }
+            .nav-tabs { gap: 4px; padding: 0 8px 10px; }
             .lesson-grid { grid-template-columns: 1fr; }
+            .lesson-card { padding: 14px; }
             .progress-stats { grid-template-columns: 1fr; }
             .message { max-width: 92%; padding: 12px 16px; font-size: 0.95rem; }
             .chat-container { padding: 12px; border-radius: 16px; }
             .chat-input { padding: 12px 16px; min-height: 48px; font-size: 0.95rem; }
             .chat-send { height: 44px; font-size: 0.95rem; border-radius: 16px; }
             .content-section { padding: 0 12px 12px; }
-            .quote-text { font-size: 1.1rem; }
+            .quote-text { font-size: 1rem; }
             .welcome-grid { grid-template-columns: 1fr; }
             .envelope-wrapper { max-width: 280px; }
             .letter-paper { padding: 24px; }
+            .vocab-item { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .vocab-info { text-align: left; }
+            .vocab-chinese { font-size: 1.3rem; }
+            .quiz-option { padding: 12px 14px; font-size: 0.95rem; }
+            .stat-number { font-size: 1.4rem; }
+            #tab-journal .new-quote-btn { width: 100%; }
+            #tab-journal div[style*="display: flex; gap: 10px"] { flex-direction: column; }
+            #tab-settings .new-quote-btn { padding: 12px 20px; font-size: 1rem; }
+        }
+
+        @media (max-width: 380px) {
+            .app-title { font-size: 1.25rem; }
+            .nav-tab { padding: 5px 8px; font-size: 0.7rem; }
         }
 
         /* Sparkle effect */
