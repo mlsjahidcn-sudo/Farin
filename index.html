@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e05780">
+    <title>Farin's AI Buddy 💜</title>
+    <link rel="manifest" href="/manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose: #ffb7c5;
+            --rose-deep: #ff8fab;
+            --rose-dark: #e05780;
+            --lavender: #e6e6fa;
+            --cream: #fff9f9;
+            --text: #4a4a6a;
+            --text-light: #7a7a9a;
+            --white: #ffffff;
+            --shadow: rgba(224, 87, 128, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--lavender) 50%, var(--rose) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Floating Flowers Animation */
+        .flower {
+            position: fixed;
+            font-size: 24px;
+            opacity: 0.6;
+            animation: float linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Opening Gift Screen */
+        #opening-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--cream), var(--lavender));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        #opening-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .gift-box {
+            width: 180px;
+            height: 180px;
+            position: relative;
+            cursor: pointer;
+            animation: giftPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes giftPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .gift-box:hover {
+            animation: giftShake 0.5s ease-in-out;
+        }
+
+        @keyframes giftShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .gift-emoji {
+            font-size: 140px;
+            line-height: 1;
+            filter: drop-shadow(0 10px 30px var(--shadow));
+        }
+
+        .gift-text {
+            margin-top: 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--rose-dark);
+            text-align: center;
+        }
+
+        .gift-subtext {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .open-btn {
+            margin-top: 30px;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 8px 25px var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .open-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(224, 87, 128, 0.3);
+        }
+
+        /* Letter Modal */
+        .letter-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 20px;
+        }
+
+        .letter-overlay.active {
+            display: flex;
+        }
+
+        .letter-paper {
+            background: var(--white);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+            animation: letterIn 0.6s ease;
+        }
+
+        @keyframes letterIn {
+            from { transform: translateY(50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .letter-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--rose), var(--rose-deep), var(--rose-dark));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .letter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--rose-dark);
+            margin-bottom: 20px;
+        }
+
+        .letter-body {
+            line-height: 1.8;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .letter-signature {
+            margin-top: 25px;
+            font-style: italic;
+            color: var(--rose-dark);
+            font-weight: 500;
+        }
+
+        .letter-close {
+            margin-top: 25px;
+            padding: 12px 30px;
+            background: var(--rose);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .letter-close:hover {
+            background: var(--rose-deep);
+        }
+
+        /* Main App */
+        #main-app {
+            display: none;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        #main-app.active {
+            display: block;
+        }
+
+        /* Header */
+        .app-header {
+            text-align: center;
+            padding: 30px 20px 20px;
+        }
+
+        .app-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--rose-dark);
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 0 20px 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 10px 22px;
+            background: rgba(255,255,255,0.6);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.9);
+            border-color: var(--rose);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 30px var(--shadow);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--rose-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Daily Quote Section */
+        .quote-display {
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .quote-author {
+            color: var(--rose-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .quote-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+            color: white;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .new-quote-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .new-quote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--shadow);
+        }
+
+        /* Chat Section */
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--rose);
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: messageIn 0.3s ease;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark));
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background: white;
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            gap: 6px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--rose-deep);
+            border-radius: 50%;
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(224,87,128,0.1);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--rose);
+            border-radius: 50px;
+            font-size: 0.95rem;
+            outline: none;
+            background: rgba(255,255,255,0.8);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chat-input:focus {
+            border-color: var(--rose-dark);
+            box-shadow: 0 0 0 4px var(--shadow);
+        }
+
+        .chat-send {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .quick-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .chip {
+            padding: 8px 16px;
+            background: rgba(255,183,197,0.3);
+            border: 1px solid var(--rose);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text);
+        }
+
+        .chip:hover {
+            background: var(--rose);
+            color: white;
+        }
+
+        /* Chinese Study */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+        }
+
+        .lesson-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,240,245,0.9));
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--rose);
+        }
+
+        .lesson-emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            color: var(--rose-dark);
+            margin-bottom: 5px;
+        }
+
+        .lesson-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .vocab-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        .vocab-item:hover {
+            background: rgba(255,183,197,0.2);
+        }
+
+        .vocab-chinese {
+            font-size: 1.5rem;
+            color: var(--rose-dark);
+        }
+
+        .vocab-info {
+            text-align: right;
+        }
+
+        .vocab-pinyin {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .vocab-meaning {
+            font-size: 0.95rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .audio-btn {
+            background: var(--rose);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .audio-btn:hover {
+            background: var(--rose-dark);
+        }
+
+        .back-btn {
+            padding: 8px 20px;
+            background: rgba(255,183,197,0.3);
+            border: 1px solid var(--rose);
+            border-radius: 50px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--rose);
+            color: white;
+        }
+
+        .lesson-content {
+            display: none;
+        }
+
+        .lesson-content.active {
+            display: block;
+        }
+
+        .lesson-list {
+            display: block;
+        }
+
+        .lesson-list.hidden {
+            display: none;
+        }
+
+        /* Quiz */
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.7);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--rose);
+            background: rgba(255,183,197,0.1);
+        }
+
+        .quiz-option.correct {
+            border-color: #4ade80;
+            background: rgba(74,222,128,0.15);
+        }
+
+        .quiz-option.wrong {
+            border-color: #f87171;
+            background: rgba(248,113,113,0.15);
+        }
+
+        .quiz-progress {
+            height: 6px;
+            background: rgba(255,183,197,0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rose), var(--rose-dark));
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        /* Progress Section */
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-box {
+            padding: 15px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+        }
+
+        .stat-number {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--rose-dark);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .heart-beat {
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.2); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .app-title { font-size: 1.7rem; }
+            .gift-text { font-size: 1.5rem; }
+            .chat-container { height: 400px; }
+            .nav-tab { padding: 8px 16px; font-size: 0.85rem; }
+            .lesson-grid { grid-template-columns: 1fr; }
+            .progress-stats { grid-template-columns: 1fr; }
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: sparkleAnim 1s ease-out forwards;
+        }
+
+        @keyframes sparkleAnim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
+        }
+
+        /* Daily Envelope */
+        #daily-envelope-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--cream), var(--lavender));
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: opacity 0.8s ease;
+        }
+
+        #daily-envelope-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            border-radius: 4px;
+            box-shadow: 0 15px 40px rgba(224, 87, 128, 0.25);
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 110px solid #ff8fab;
+            z-index: 2;
+        }
+
+        .envelope::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 110px solid #ff9eb5;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 4;
+        }
+
+        .envelope-wrapper.open .envelope::after {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-card {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            right: 15px;
+            height: 180px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.8s ease 0.3s;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .envelope-wrapper.open .envelope-card {
+            transform: translateY(-140px);
+        }
+
+        .envelope-sticker {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--rose-dark), #c2185b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 5;
+        }
+
+        .envelope-decor {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        .envelope-decor.tl { top: 10px; left: 10px; }
+        .envelope-decor.tr { top: 10px; right: 10px; }
+        .envelope-decor.bl { bottom: 15px; left: 10px; z-index: 5; }
+        .envelope-decor.br { bottom: 15px; right: 10px; z-index: 5; }
+
+        .envelope-date {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .envelope-wish {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            color: var(--text);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .envelope-from {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--rose-dark);
+            font-weight: 500;
+        }
+
+        .envelope-prompt {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1rem;
+            animation: pulseText 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .envelope-open-btn {
+            margin-top: 30px;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .envelope-open-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(224, 87, 128, 0.3);
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s ease-in forwards;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .api-status-box {
+            margin-top: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .api-status-box.success {
+            display: block;
+            background: rgba(74, 222, 128, 0.15);
+            color: #166534;
+            border: 1px solid #4ade80;
+        }
+
+        .api-status-box.error {
+            display: block;
+            background: rgba(248, 113, 113, 0.15);
+            color: #991b1b;
+            border: 1px solid #f87171;
+        }
+
+        .api-status-box.info {
+            display: block;
+            background: rgba(167, 139, 250, 0.15);
+            color: #5b21b6;
+            border: 1px solid #a78bfa;
+        }
+
+        .hidden-el { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- Floating Flowers -->
+<div id="flowers-container"></div>
+
+<!-- Opening Screen (First Time Only) -->
+<div id="opening-screen">
+    <div class="gift-box" onclick="openGift()">
+        <div class="gift-emoji">🎁</div>
+    </div>
+    <div class="gift-text">A Special Gift for Farin</div>
+    <div class="gift-subtext">Tap the gift to unwrap 💜</div>
+    <button class="open-btn" onclick="openGift()">Open Your Gift</button>
+</div>
+
+<!-- Daily Envelope Screen (Returns) -->
+<div id="daily-envelope-screen">
+    <div class="gift-text" style="margin-bottom: 10px;">💌 A Wish for You Today</div>
+    <div class="gift-subtext" id="envelope-date-text">Your daily love note is here</div>
+    
+    <div class="envelope-wrapper" id="envelope-wrapper" onclick="openEnvelope()" style="margin-top: 40px;">
+        <div class="envelope">
+            <div class="envelope-sticker">💜</div>
+            <div class="envelope-decor tl">🌸</div>
+            <div class="envelope-decor tr">🌺</div>
+            <div class="envelope-decor bl">🌷</div>
+            <div class="envelope-decor br">💮</div>
+        </div>
+        <div class="envelope-card" id="envelope-card">
+            <div class="envelope-date" id="envelope-date"></div>
+            <div class="envelope-wish" id="envelope-wish"></div>
+            <div class="envelope-from">— With love, Jahid 💜</div>
+        </div>
+    </div>
+    
+    <div class="envelope-prompt" id="envelope-prompt">Tap the envelope to open ✨</div>
+    <button class="envelope-open-btn" id="envelope-continue" style="display:none;" onclick="enterApp()">Continue to Buddy 🌸</button>
+</div>
+
+<!-- Letter Overlay -->
+<div class="letter-overlay" id="letter-overlay">
+    <div class="letter-paper">
+        <div class="letter-title">Dear Farin,</div>
+        <div class="letter-body">
+            I built this little AI buddy just for you — to help with your studies, practice Chinese together, and remind you every day how special you are to me.<br><br>
+            Whenever you need help, a sweet quote, or just someone to chat with, your buddy is here.<br><br>
+            I hope this makes you smile. You deserve all the flowers and happiness in the world. 🌸
+        </div>
+        <div class="letter-signature">With all my love,<br>Jahid 💜</div>
+        <button class="letter-close" onclick="enterApp()">Enter Your Buddy ✨</button>
+    </div>
+</div>
+
+<!-- Main App -->
+<div id="main-app">
+    <header class="app-header">
+        <div class="app-title">🌸 Farin's Buddy</div>
+        <div class="app-subtitle">Your personal AI friend & study partner</div>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="home" onclick="showTab('home')">🏠 Home</button>
+        <button class="nav-tab" data-tab="chat" onclick="showTab('chat')">💬 Chat</button>
+        <button class="nav-tab" data-tab="chinese" onclick="showTab('chinese')">🇨🇳 Chinese</button>
+        <button class="nav-tab" data-tab="journal" onclick="showTab('journal')">📝 Journal</button>
+        <button class="nav-tab" data-tab="progress" onclick="showTab('progress')">📊 Progress</button>
+        <button class="nav-tab" data-tab="settings" onclick="showTab('settings')">⚙️ Settings</button>
+    </nav>
+
+    <!-- HOME TAB -->
+    <section class="content-section active" id="tab-home">
+        <div class="card">
+            <div class="quote-display">
+                <span class="quote-badge">✨ Daily Love Note</span>
+                <div class="quote-text" id="daily-quote">Loading your special message...</div>
+                <div class="quote-author" id="quote-author"></div>
+                <button class="new-quote-btn" onclick="newQuote()">💜 Another Message</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🌺 Flower of the Day</div>
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 4rem; margin-bottom: 10px;" id="flower-emoji">🌸</div>
+                <div style="font-weight: 600; color: var(--rose-dark); font-size: 1.1rem;" id="flower-name">Cherry Blossom</div>
+                <div style="color: var(--text-light); margin-top: 8px; font-size: 0.9rem;" id="flower-meaning">Love, beauty, and the fragility of life</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📚 Quick Study</div>
+            <div class="quick-chips">
+                <button class="chip" onclick="showTab('chinese'); showLesson('greetings')">👋 Greetings</button>
+                <button class="chip" onclick="showTab('chinese'); showLesson('numbers')">🔢 Numbers</button>
+                <button class="chip" onclick="showTab('chinese'); showLesson('phrases')">💬 Phrases</button>
+                <button class="chip" onclick="showTab('chat'); startChat('I want to learn Chinese. What HSK level should I start?')">🎯 HSK Practice</button>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #e0f2fe, #fce7f3); border: 2px solid var(--rose-deep);">
+            <div class="card-title">🧘 Calm Corner</div>
+            <div style="color: var(--text); line-height: 1.7; font-size: 0.95rem; margin-bottom: 15px;">
+                When your mind feels loud, come here. You don't have to carry everything alone.
+            </div>
+            <div class="quick-chips">
+                <button class="chip" onclick="showTab('chat'); startChat('I am overthinking')">🧠 Stop Overthinking</button>
+                <button class="chip" onclick="showTab('chat'); startChat('Help me calm down')">🌬️ Breathe With Me</button>
+                <button class="chip" onclick="showTab('chat'); startChat('I feel worried')">💜 I Feel Worried</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHAT TAB -->
+    <section class="content-section" id="tab-chat">
+        <div class="card" style="padding: 15px;">
+            <div class="chat-container">
+                <div class="quick-chips" style="padding-bottom: 10px;">
+                    <button class="chip" onclick="sendQuick('Tell me a love quote')">💜 Love Quote</button>
+                    <button class="chip" onclick="sendQuick('Help me with Chinese HSK')">🇨🇳 Chinese HSK Help</button>
+                    <button class="chip" onclick="sendQuick('Quiz me on Chinese')">📝 Quiz Me</button>
+                    <button class="chip" onclick="sendQuick('Motivate me')">✨ Motivation</button>
+                    <button class="chip" onclick="sendQuick('I am overthinking')">🧠 Stop Overthinking</button>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        <strong>Hi Farin! 👋</strong><br>
+                        I'm your personal buddy! Ask me anything — I can help with HSK 1-3 Chinese, share love quotes from Jahid, or just chat. What would you like to do today? 💜
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="chat-send" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHINESE TAB -->
+    <section class="content-section" id="tab-chinese">
+        <div class="lesson-list" id="lesson-list">
+            <div class="card">
+                <div class="card-title">🇨🇳 Chinese Learning — HSK 1 to 3</div>
+                <div class="lesson-grid">
+                    <div class="lesson-card" onclick="showLesson('greetings')">
+                        <div class="lesson-emoji">👋</div>
+                        <div class="lesson-title">Greetings</div>
+                        <div class="lesson-desc">HSK 1 — Hello, goodbye, thank you, sorry</div>
+                    </div>
+                    <div class="lesson-card" onclick="showLesson('numbers')">
+                        <div class="lesson-emoji">🔢</div>
+                        <div class="lesson-title">Numbers 1-10</div>
+                        <div class="lesson-desc">HSK 1 — Counting with pronunciation</div>
+                    </div>
+                    <div class="lesson-card" onclick="showLesson('phrases')">
+                        <div class="lesson-emoji">💬</div>
+                        <div class="lesson-title">Daily Phrases</div>
+                        <div class="lesson-desc">HSK 1-2 — Useful sentences for everyday life</div>
+                    </div>
+                    <div class="lesson-card" onclick="showLesson('family')">
+                        <div class="lesson-emoji">👨‍👩‍👧</div>
+                        <div class="lesson-title">Family</div>
+                        <div class="lesson-desc">HSK 2 — Family member names in Chinese</div>
+                    </div>
+                    <div class="lesson-card" onclick="showLesson('colors')">
+                        <div class="lesson-emoji">🎨</div>
+                        <div class="lesson-title">Colors</div>
+                        <div class="lesson-desc">HSK 2 — Common colors and descriptions</div>
+                    </div>
+                    <div class="lesson-card" onclick="showLesson('food')">
+                        <div class="lesson-emoji">🍜</div>
+                        <div class="lesson-title">Food & Drinks</div>
+                        <div class="lesson-desc">HSK 2-3 — Ordering and talking about food</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-greetings">
+            <button class="back-btn" onclick="backToLessons()">← Back to Lessons</button>
+            <div class="card">
+                <div class="card-title">👋 Greetings</div>
+                <div id="greetings-vocab"></div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-numbers">
+            <button class="back-btn" onclick="backToLessons()">← Back to Lessons</button>
+            <div class="card">
+                <div class="card-title">🔢 Numbers 1-10</div>
+                <div id="numbers-vocab"></div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-phrases">
+            <button class="back-btn" onclick="backToLessons()">← Back to Lessons</button>
+            <div class="card">
+                <div class="card-title">💬 Daily Phrases</div>
+                <div id="phrases-vocab"></div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-family">
+            <button class="back-btn" onclick="backToLessons()">← Back to Lessons</button>
+            <div class="card">
+                <div class="card-title">👨‍👩‍👧 Family Members</div>
+                <div id="family-vocab"></div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-colors">
+            <button class="back-btn" onclick="backToLessons()">← Back to Lessons</button>
+            <div class="card">
+                <div class="card-title">🎨 Colors</div>
+                <div id="colors-vocab"></div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-food">
+            <button class="back-btn" onclick="backToLessons()">← Back to Lessons</button>
+            <div class="card">
+                <div class="card-title">🍜 Food & Drinks</div>
+                <div id="food-vocab"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="card" id="quiz-card" style="display: none;">
+            <div class="card-title">📝 Quick Quiz</div>
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" id="quiz-bar" style="width: 0%"></div>
+            </div>
+            <div id="quiz-question"></div>
+            <div id="quiz-options"></div>
+            <div id="quiz-result" style="margin-top: 15px; font-weight: 500; text-align: center;"></div>
+        </div>
+    </section>
+
+    <!-- JOURNAL TAB -->
+    <section class="content-section" id="tab-journal">
+        <div class="card">
+            <div class="card-title">📝 Farin's Journal</div>
+            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                A safe space for your thoughts. Write anything — your buddy is here to listen.
+            </div>
+            <textarea id="journal-input" placeholder="What's on your mind today, Farin? 🌸" style="width: 100%; min-height: 120px; padding: 16px; border: 2px solid var(--rose); border-radius: 16px; font-size: 0.95rem; font-family: 'Poppins', sans-serif; background: rgba(255,255,255,0.8); resize: vertical; outline: none;"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="new-quote-btn" onclick="saveJournalEntry()" style="margin-top: 0;">💾 Save Entry</button>
+                <button class="new-quote-btn" onclick="saveJournalAndTalk()" style="margin-top: 0; background: linear-gradient(135deg, #a78bfa, #7c3aed);">💬 Save & Talk to Buddy</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📚 Past Entries</div>
+            <div id="journal-entries" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="color: var(--text-light); text-align: center; padding: 20px;">No entries yet. Start writing! 💜</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRESS TAB -->
+    <section class="content-section" id="tab-progress">
+        <div class="card" style="text-align: center;">
+            <div class="card-title">📊 Your Learning Journey</div>
+            <svg class="progress-ring" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,183,197,0.3)" stroke-width="10"/>
+                <circle id="progress-circle" class="progress-ring-circle" cx="60" cy="60" r="50" fill="none" stroke="url(#gradient)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffb7c5"/>
+                        <stop offset="100%" stop-color="#e05780"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div style="font-size: 1.5rem; font-weight: 600; color: var(--rose-dark); margin-top: -10px;" id="progress-percent">0%</div>
+            <div style="color: var(--text-light); font-size: 0.9rem;">Beginner Level</div>
+        </div>
+
+        <div class="card">
+            <div class="progress-stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-words">0</div>
+                    <div class="stat-label">Words Learned</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-quizzes">0</div>
+                    <div class="stat-label">Quizzes Taken</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="stat-streak">1</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🏆 Achievements</div>
+            <div id="achievements-list" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <span style="padding: 8px 16px; background: linear-gradient(135deg, var(--rose), var(--rose-deep)); color: white; border-radius: 50px; font-size: 0.85rem;">🌱 First Steps</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SETTINGS TAB -->
+    <section class="content-section" id="tab-settings">
+        <div class="card">
+            <div class="card-title">🤖 AI Status</div>
+            <div style="margin-bottom: 15px; color: var(--text-light); font-size: 0.9rem;">
+                Your buddy is powered by Jahid's Heart 💜 through a secure backend. No setup needed!
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="new-quote-btn" onclick="checkBackendHealth()" style="margin-top: 0; background: linear-gradient(135deg, #a78bfa, #7c3aed);">🧪 Check Connection</button>
+            </div>
+            
+            <div id="api-status" style="padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; display: none;"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💜 About Farin's Buddy</div>
+            <div style="color: var(--text); line-height: 1.7; font-size: 0.95rem;">
+                <p style="margin-bottom: 10px;">This buddy was lovingly built by <strong>Jahid</strong> just for <strong>Farin</strong>.</p>
+                <p style="margin-bottom: 10px;">🌸 Flower-themed design because Farin loves flowers</p>
+                <p style="margin-bottom: 10px;">🇨🇳 HSK 1-3 Chinese lessons with audio pronunciation</p>
+                <p style="margin-bottom: 10px;">💌 Daily love wishes delivered in a beautiful envelope</p>
+                <p>💬 Smart chat powered by Jahid's Heart 💜 (always here for you)</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🔔 Daily Gentle Reminders</div>
+            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                Allow your buddy to send you soft reminders throughout the day.
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem;">
+                    <input type="checkbox" id="reminder-love" onchange="toggleReminder('love')" style="width: 18px; height: 18px; accent-color: var(--rose-dark);">
+                    <span>💜 Morning Love Note</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem;">
+                    <input type="checkbox" id="reminder-study" onchange="toggleReminder('study')" style="width: 18px; height: 18px; accent-color: var(--rose-dark);">
+                    <span>📚 Study Reminder</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem;">
+                    <input type="checkbox" id="reminder-calm" onchange="toggleReminder('calm')" style="width: 18px; height: 18px; accent-color: var(--rose-dark);">
+                    <span>🌬️ Evening Calm Check</span>
+                </label>
+            </div>
+            <div id="reminder-status" style="margin-top: 12px; font-size: 0.85rem; color: var(--text-light); display: none;"></div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #fce7f3, #e0f2fe); border: 2px solid var(--rose-deep);">
+            <div class="card-title">💜 Send a Hug to Jahid</div>
+            <div style="color: var(--text); line-height: 1.7; font-size: 0.95rem; margin-bottom: 15px;">
+                Feeling grateful? Send Jahid a virtual hug and let him know you're thinking of him.
+            </div>
+            <button class="new-quote-btn" onclick="sendHugToJahid()" style="margin-top: 0; background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark)); font-size: 1.1rem; padding: 14px 28px;">🤗 Send Hug</button>
+            <div id="hug-status" style="margin-top: 12px; font-size: 0.9rem; font-weight: 500; display: none;"></div>
+            <div id="hug-count" style="margin-top: 8px; font-size: 0.85rem; color: var(--text-light);"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🔄 Reset Progress</div>
+            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                Want to start fresh? This will clear all your learning progress, streaks, achievements, and journal entries.
+            </div>
+            <button class="new-quote-btn" onclick="resetProgress()" style="background: linear-gradient(135deg, #f87171, #dc2626);">Reset All Progress</button>
+        </div>
+    </section>
+
+    <footer class="app-footer">
+        Made with <span class="heart-beat">💜</span> just for Farin 🌸
+    </footer>
+</div>
+
+<script>
+// ===================== DATA =====================
+const loveQuotes = [
+    { text: "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine.", author: "Jahid 💜" },
+    { text: "You are my today and all of my tomorrows.", author: "Jahid, forever 💜" },
+    { text: "I saw that you were perfect, and so I loved you. Then I saw that you were not perfect and I loved you even more.", author: "Jahid 💜" },
+    { text: "You are the finest, loveliest, tenderest, and most beautiful person I have ever known — and even that is an understatement.", author: "Jahid 🌸" },
+    { text: "If I know what love is, it is because of you.", author: "Jahid 💜" },
+    { text: "I would rather spend one lifetime with you, than face all the ages of this world alone.", author: "Jahid 💜" },
+    { text: "You have bewitched me, body and soul, and I love, I love, I love you.", author: "Jahid 💜" },
+    { text: "To the world you may be one person, but to me you are the whole world.", author: "From Jahid, for Farin 💜" },
+    { text: "I love you not because of who you are, but because of who I am when I am with you.", author: "Jahid 💜" },
+    { text: "Every day with you is a wonderful addition to my life's journey.", author: "Jahid 🌸" },
+    { text: "You are my sun, my moon, and all my stars.", author: "Jahid 💜" },
+    { text: "I choose you. And I'll choose you over and over and over. Without pause, without a doubt, in a heartbeat. I'll keep choosing you.", author: "Jahid 💜" },
+    { text: "The best thing to hold onto in life is each other.", author: "Jahid 💜" },
+    { text: "You make me want to be a better person.", author: "Jahid 🌸" },
+    { text: "Thinking of you keeps me awake. Dreaming of you keeps me asleep. Being with you keeps me alive.", author: "Jahid 💜" },
+    { text: "I love you more than yesterday, but less than tomorrow.", author: "Jahid 💜" },
+    { text: "Your smile is my favorite notification.", author: "Jahid 🌸" },
+    { text: "When I tell you I love you, I am not saying it out of habit. I am reminding you that you are my life.", author: "A promise from Jahid 💜" },
+    { text: "You are the poem I never knew how to write, and this life is the story I have always wanted to tell.", author: "Jahid 💜" },
+    { text: "Grow old along with me! The best is yet to be.", author: "Jahid 🌸" }
+];
+
+const flowers = [
+    { emoji: "🌸", name: "Cherry Blossom", meaning: "Love, beauty, and the fragility of life" },
+    { emoji: "🌹", name: "Red Rose", meaning: "Deep love, passion, and romance" },
+    { emoji: "🌷", name: "Tulip", meaning: "Perfect love and eternal life" },
+    { emoji: "🌻", name: "Sunflower", meaning: "Adoration, loyalty, and lasting happiness" },
+    { emoji: "🌺", name: "Hibiscus", meaning: "Delicate beauty and rare perfection" },
+    { emoji: "🪷", name: "Lotus", meaning: "Purity, enlightenment, and rebirth" },
+    { emoji: "🌼", name: "Daisy", meaning: "Innocence, loyal love, and purity" },
+    { emoji: "💐", name: "Bouquet", meaning: "A gathering of all beautiful things" },
+    { emoji: "🌿", name: "Lavender", meaning: "Calmness, grace, and devotion" },
+    { emoji: "🌾", name: "Wheat", meaning: "Abundance, prosperity, and nourishment" }
+];
+
+const dailyWishes = [
+    "Good morning, beautiful soul. May your day be as bright as your smile. 🌸",
+    "Rise and shine, Farin. The world is better because you're in it. 💜",
+    "Sending you a pocket full of sunshine and a heart full of love today. ☀️",
+    "May every step you take today lead you to something wonderful. ✨",
+    "You are my first thought in the morning and my last prayer at night. 🌙",
+    "Today is a perfect day to remind you how deeply you are loved. 💜",
+    "Whatever today brings, remember: you are stronger than you know. 💪",
+    "I hope your day is filled with little moments that make you smile. 🌷",
+    "You are the magic I never knew I was searching for. ✨",
+    "May your coffee be strong and your day be sweet, just like you. ☕🍯",
+    "Every sunrise gives me another day to fall for you all over again. 🌅",
+    "You make ordinary moments feel like poetry. 📖",
+    "Keep shining, Farin. The world needs your light. 🌟",
+    "I believe in you, in us, in the beautiful future we're building. 💜",
+    "May today bring you peace, joy, and a reason to laugh out loud. 😄",
+    "You are not just part of my life — you are my favorite part of it. 💜",
+    "Distance means so little when someone means so much. Thinking of you. 🌸",
+    "May your worries be light and your blessings be heavy today. 🕊️",
+    "You are the dream I never want to wake up from. 💫",
+    "Sending you a thousand hugs wrapped in this little message. 🤗",
+    "The stars have nothing on the way your eyes light up. ⭐",
+    "May your day be as lovely and rare as a cherry blossom in bloom. 🌸",
+    "You are my safe place in this chaotic world. 🏡💜",
+    "No matter what happens today, I've got your back. Always. 🤝",
+    "You are enough. You are worthy. You are deeply loved. 💜",
+    "I fall for you a little more with every sunrise I see without you. 🌅",
+    "May luck follow you, love surround you, and happiness find you. 🍀",
+    "Your laughter is my favorite melody. Play it often today. 🎵",
+    "You are the reason I believe in magic. ✨",
+    "Wishing you a day so good that you forget to check your worries. 🌈",
+    "You are my home, no matter where we are in the world. 🌍💜",
+    "May your heart be light, your mind be clear, and your soul be happy. 🕊️",
+    "I would cross oceans just to bring you your favorite flowers. 🌊🌺",
+    "You are braver than you believe, and loved more than you know. 🦁",
+    "Every day away from you is a day closer to being with you. ⏳💜",
+    "May today surprise you with something unexpectedly beautiful. 🎁",
+    "You are my favorite notification, my best distraction, my greatest love. 📱💜",
+    "The world is lucky to have you in it. Never forget that. 🌍",
+    "May your troubles be less and your blessings be more today. 🙏",
+    "You are the most beautiful chapter in the story of my life. 📖",
+    "Sending you strength for your challenges and joy for your victories. 🏆",
+    "If I could give you one thing, it would be the ability to see yourself through my eyes. 👁️",
+    "May your day bloom like a garden in spring — full of color and life. 🌷🌹🌻",
+    "You are my answered prayer, my granted wish, my answered hope. 🙏",
+    "No matter how dark it gets, you will always be my light. 💡💜",
+    "May your heart feel full, your mind feel free, and your day feel easy. 🍃",
+    "You are the kind of beautiful that makes people believe in love at first sight. 😍",
+    "I hope you find a hundred reasons to smile today. 😊",
+    "You are my today, tomorrow, and all the days after that. 🗓️💜",
+    "May the wind be at your back and love be all around you. 🌬️",
+    "Your kindness is a ripple that touches everyone around you. Keep shining. 🌊",
+    "I don't need a wishbone when I have you. You are my wish come true. 🦴✨",
+    "May your dreams be big and your worries be small today. 🌙",
+    "You are the reason my heart beats a little faster. 💓",
+    "Wishing you a day as sweet as your soul and as bright as your spirit. 🍬",
+    "Even on cloudy days, you are my sunshine breaking through. ☁️☀️",
+    "You are more precious to me than all the flowers in every garden. 🌺",
+    "May today bring you one step closer to everything your heart desires. 💫",
+    "I never knew what love truly was until I thought of you every single day. 💭",
+    "You are my favorite place to go when my mind searches for peace. 🧘",
+    "May your day be sprinkled with moments that feel like magic. ✨",
+    "You are the best thing I never saw coming. 🎉",
+    "Holding you in my heart until I can hold you in my arms again. 🤗",
+    "May your path today be smooth and your burdens be light. 🛤️",
+    "You are the beautiful chaos I never want to organize. 🌀💜",
+    "Every love song suddenly makes sense when I think of you. 🎶",
+    "May you feel as loved today as you make me feel every single day. 💜",
+    "You are my greatest adventure and my favorite destination. 🗺️",
+    "May the universe conspire to bring you nothing but joy today. 🌌",
+    "You are my heart's favorite address. 📬💜",
+    "Wishing you a morning as fresh as dew and a day as lovely as you. 🌿",
+    "You are the miracle I whisper thank you for every night. 🌙",
+    "May your today be better than your yesterday and worse than your tomorrow. 📈",
+    "You are the warmth I feel even on the coldest days. 🔥",
+    "I hope you know that somewhere, someone is thinking of you and smiling. 😊",
+    "You are my compass when I feel lost in this world. 🧭",
+    "May your cup overflow with love, laughter, and little blessings. ☕",
+    "You are the plot twist I never expected but always needed. 📖",
+    "Sending you all the love my heart can hold and then some. 💜",
+    "May you find beauty in the ordinary and magic in the mundane today. ✨",
+    "You are my once-in-a-lifetime kind of love. 💍",
+    "I hope your day is filled with so much good that you forget the bad. 🌈",
+    "You are the heartbeat at the end of my every thought. 💓",
+    "May angels watch over you and love surround you today. 👼",
+    "You are the reason I look forward to every tomorrow. 🌅",
+    "Wishing you strength for what lies ahead and love for where you are. 💪💜",
+    "You are my serendipity — a beautiful accident I thank the stars for. ⭐",
+    "May your day be painted in your favorite colors. 🎨",
+    "You are the only permission I need to believe in forever. ♾️",
+    "I hope today gives you a reason to dance a little. 💃",
+    "You are my shelter in every storm and my sun on every clear day. 🌤️",
+    "May your heart sing with joy and your spirit dance with peace today. 🕊️",
+    "You are the best part of every day, even the days we are apart. 🌸",
+    "Wishing you a day so wonderful that it becomes a beautiful memory. 📸",
+    "You are the love I will spend my whole life trying to deserve. 💜",
+    "May the flowers bloom brighter today, just for you. 🌺",
+    "You are my heart's permanent residence. No vacancies, just love. 🏠💜"
+];
+
+const chineseLessons = {
+    greetings: [
+        { zh: "你好", pinyin: "nǐ hǎo", meaning: "Hello", audio: "ni hao" },
+        { zh: "再见", pinyin: "zài jiàn", meaning: "Goodbye", audio: "zai jian" },
+        { zh: "谢谢", pinyin: "xiè xiè", meaning: "Thank you", audio: "xie xie" },
+        { zh: "对不起", pinyin: "duì bu qǐ", meaning: "Sorry", audio: "dui bu qi" },
+        { zh: "没关系", pinyin: "méi guān xi", meaning: "It's okay", audio: "mei guan xi" },
+        { zh: "早上好", pinyin: "zǎo shang hǎo", meaning: "Good morning", audio: "zao shang hao" },
+        { zh: "晚安", pinyin: "wǎn ān", meaning: "Good night", audio: "wan an" },
+        { zh: "你好吗", pinyin: "nǐ hǎo ma", meaning: "How are you?", audio: "ni hao ma" },
+        { zh: "我叫Farin", pinyin: "wǒ jiào Farin", meaning: "My name is Farin", audio: "wo jiao" },
+        { zh: "很高兴认识你", pinyin: "hěn gāo xìng rèn shi nǐ", meaning: "Nice to meet you", audio: "hen gao xing ren shi ni" }
+    ],
+    numbers: [
+        { zh: "一", pinyin: "yī", meaning: "One", audio: "yi" },
+        { zh: "二", pinyin: "èr", meaning: "Two", audio: "er" },
+        { zh: "三", pinyin: "sān", meaning: "Three", audio: "san" },
+        { zh: "四", pinyin: "sì", meaning: "Four", audio: "si" },
+        { zh: "五", pinyin: "wǔ", meaning: "Five", audio: "wu" },
+        { zh: "六", pinyin: "liù", meaning: "Six", audio: "liu" },
+        { zh: "七", pinyin: "qī", meaning: "Seven", audio: "qi" },
+        { zh: "八", pinyin: "bā", meaning: "Eight", audio: "ba" },
+        { zh: "九", pinyin: "jiǔ", meaning: "Nine", audio: "jiu" },
+        { zh: "十", pinyin: "shí", meaning: "Ten", audio: "shi" }
+    ],
+    phrases: [
+        { zh: "我爱你", pinyin: "wǒ ài nǐ", meaning: "I love you", audio: "wo ai ni" },
+        { zh: "我不知道", pinyin: "wǒ bù zhī dào", meaning: "I don't know", audio: "wo bu zhi dao" },
+        { zh: "我明白了", pinyin: "wǒ míng bái le", meaning: "I understand", audio: "wo ming bai le" },
+        { zh: "请帮我", pinyin: "qǐng bāng wǒ", meaning: "Please help me", audio: "qing bang wo" },
+        { zh: "这个多少钱", pinyin: "zhè ge duō shao qián", meaning: "How much is this?", audio: "zhe ge duo shao qian" },
+        { zh: "我想要水", pinyin: "wǒ xiǎng yào shuǐ", meaning: "I want water", audio: "wo xiang yao shui" },
+        { zh: "厕所在哪里", pinyin: "cè suǒ zài nǎ lǐ", meaning: "Where is the bathroom?", audio: "ce suo zai na li" },
+        { zh: "我是学生", pinyin: "wǒ shì xué sheng", meaning: "I am a student", audio: "wo shi xue sheng" },
+        { zh: "今天天气很好", pinyin: "jīn tiān tiān qì hěn hǎo", meaning: "The weather is good today", audio: "jin tian tian qi hen hao" },
+        { zh: "你很漂亮", pinyin: "nǐ hěn piào liang", meaning: "You are beautiful", audio: "ni hen piao liang" }
+    ],
+    family: [
+        { zh: "妈妈", pinyin: "mā ma", meaning: "Mother/Mom", audio: "ma ma" },
+        { zh: "爸爸", pinyin: "bà ba", meaning: "Father/Dad", audio: "ba ba" },
+        { zh: "哥哥", pinyin: "gē ge", meaning: "Older brother", audio: "ge ge" },
+        { zh: "姐姐", pinyin: "jiě jie", meaning: "Older sister", audio: "jie jie" },
+        { zh: "弟弟", pinyin: "dì di", meaning: "Younger brother", audio: "di di" },
+        { zh: "妹妹", pinyin: "mèi mei", meaning: "Younger sister", audio: "mei mei" },
+        { zh: "朋友", pinyin: "péng yǒu", meaning: "Friend", audio: "peng you" },
+        { zh: "家人", pinyin: "jiā rén", meaning: "Family", audio: "jia ren" }
+    ],
+    colors: [
+        { zh: "红色", pinyin: "hóng sè", meaning: "Red", audio: "hong se" },
+        { zh: "蓝色", pinyin: "lán sè", meaning: "Blue", audio: "lan se" },
+        { zh: "绿色", pinyin: "lǜ sè", meaning: "Green", audio: "lv se" },
+        { zh: "黄色", pinyin: "huáng sè", meaning: "Yellow", audio: "huang se" },
+        { zh: "白色", pinyin: "bái sè", meaning: "White", audio: "bai se" },
+        { zh: "黑色", pinyin: "hēi sè", meaning: "Black", audio: "hei se" },
+        { zh: "粉色", pinyin: "fěn sè", meaning: "Pink", audio: "fen se" },
+        { zh: "紫色", pinyin: "zǐ sè", meaning: "Purple", audio: "zi se" }
+    ],
+    food: [
+        { zh: "水", pinyin: "shuǐ", meaning: "Water", audio: "shui" },
+        { zh: "茶", pinyin: "chá", meaning: "Tea", audio: "cha" },
+        { zh: "米饭", pinyin: "mǐ fàn", meaning: "Rice", audio: "mi fan" },
+        { zh: "面", pinyin: "miàn", meaning: "Noodles", audio: "mian" },
+        { zh: "面包", pinyin: "miàn bāo", meaning: "Bread", audio: "mian bao" },
+        { zh: "水果", pinyin: "shuǐ guǒ", meaning: "Fruit", audio: "shui guo" },
+        { zh: "肉", pinyin: "ròu", meaning: "Meat", audio: "rou" },
+        { zh: "鱼", pinyin: "yú", meaning: "Fish", audio: "yu" }
+    ]
+};
+
+const quizzes = {
+    greetings: [
+        { q: "How do you say 'Hello' in Chinese?", options: ["再见", "你好", "谢谢", "晚安"], answer: 1 },
+        { q: "What does '谢谢' mean?", options: ["Sorry", "Goodbye", "Thank you", "Hello"], answer: 2 },
+        { q: "How do you say 'Good night'?", options: ["早上好", "晚安", "再见", "你好"], answer: 1 }
+    ],
+    numbers: [
+        { q: "What number is '五'?", options: ["3", "4", "5", "6"], answer: 2 },
+        { q: "How do you say 'Seven'?", options: ["八", "九", "六", "七"], answer: 3 },
+        { q: "What does '十' mean?", options: ["Five", "Ten", "One", "Zero"], answer: 1 }
+    ],
+    phrases: [
+        { q: "How do you say 'I love you'?", options: ["我不知道", "我爱你", "请帮我", "你很漂亮"], answer: 1 },
+        { q: "What does '我不知道' mean?", options: ["I love you", "I don't know", "Please help", "You are beautiful"], answer: 1 },
+        { q: "How do you ask 'How much is this?'", options: ["厕所在哪里", "这个多少钱", "我想要水", "我是学生"], answer: 1 }
+    ]
+};
+
+// ===================== STATE =====================
+let currentTab = 'home';
+let wordsLearned = parseInt(localStorage.getItem('farin_words') || '0');
+let quizzesTaken = parseInt(localStorage.getItem('farin_quizzes') || '0');
+let streak = parseInt(localStorage.getItem('farin_streak') || '1');
+let lastVisit = localStorage.getItem('farin_last_visit');
+let achievements = JSON.parse(localStorage.getItem('farin_achievements') || '["first-steps"]');
+
+// ===================== FLOWERS ANIMATION =====================
+function createFlowers() {
+    const container = document.getElementById('flowers-container');
+    const flowerEmojis = ['🌸', '🌺', '🌷', '💮', '🏵️', '🌹', '🪷'];
+    
+    setInterval(() => {
+        const flower = document.createElement('div');
+        flower.className = 'flower';
+        flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+        flower.style.left = Math.random() * 100 + 'vw';
+        flower.style.animationDuration = (Math.random() * 5 + 8) + 's';
+        flower.style.fontSize = (Math.random() * 15 + 15) + 'px';
+        container.appendChild(flower);
+        
+        setTimeout(() => flower.remove(), 14000);
+    }, 2000);
+}
+
+// ===================== OPENING =====================
+function openGift() {
+    document.getElementById('letter-overlay').classList.add('active');
+}
+
+function enterApp() {
+    document.getElementById('letter-overlay').classList.remove('active');
+    document.getElementById('opening-screen').classList.add('hidden');
+    document.getElementById('daily-envelope-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.add('active');
+    
+    // Check streak
+    const today = new Date().toDateString();
+    if (lastVisit) {
+        const last = new Date(lastVisit);
+        const diff = (new Date() - last) / (1000 * 60 * 60 * 24);
+        if (diff >= 1 && diff < 2) streak++;
+        else if (diff >= 2) streak = 1;
+    }
+    localStorage.setItem('farin_last_visit', new Date().toISOString());
+    localStorage.setItem('farin_streak', streak);
+    
+    updateProgress();
+    newQuote();
+    newFlower();
+}
+
+function getDailyWish() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return dailyWishes[dayOfYear % dailyWishes.length];
+}
+
+function getFormattedDate() {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date().toLocaleDateString('en-US', options);
+}
+
+function openEnvelope() {
+    const wrapper = document.getElementById('envelope-wrapper');
+    if (wrapper.classList.contains('open')) return;
+    
+    wrapper.classList.add('open');
+    document.getElementById('envelope-prompt').style.display = 'none';
+    
+    // Show confetti
+    createConfetti();
+    
+    // Show continue button after animation
+    setTimeout(() => {
+        document.getElementById('envelope-continue').style.display = 'inline-block';
+    }, 1200);
+}
+
+function createConfetti() {
+    const colors = ['#ffb7c5', '#ff8fab', '#e05780', '#ffd1dc', '#ffdfba', '#ffffba', '#baffc9', '#bae1ff'];
+    for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = (Math.random() * 8 + 6) + 'px';
+        piece.style.height = (Math.random() * 8 + 6) + 'px';
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        piece.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 4500);
+    }
+}
+
+function showDailyEnvelope() {
+    const wish = getDailyWish();
+    document.getElementById('envelope-wish').textContent = wish;
+    document.getElementById('envelope-date').textContent = getFormattedDate();
+    document.getElementById('envelope-date-text').textContent = 'Your love note for ' + new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    
+    document.getElementById('daily-envelope-screen').style.display = 'flex';
+}
+
+function checkDailyVisit() {
+    const firstVisit = localStorage.getItem('farin_first_visit');
+    const lastVisitDate = localStorage.getItem('farin_last_visit_date');
+    const today = new Date().toDateString();
+    
+    if (!firstVisit) {
+        // First time ever — show gift
+        localStorage.setItem('farin_first_visit', 'true');
+        localStorage.setItem('farin_last_visit_date', today);
+        return;
+    }
+    
+    if (lastVisitDate !== today) {
+        // New day — show envelope
+        localStorage.setItem('farin_last_visit_date', today);
+        document.getElementById('opening-screen').style.display = 'none';
+        showDailyEnvelope();
+    } else {
+        // Same day — go straight to app
+        document.getElementById('opening-screen').style.display = 'none';
+        document.getElementById('daily-envelope-screen').style.display = 'none';
+        document.getElementById('main-app').classList.add('active');
+        updateProgress();
+        newQuote();
+        newFlower();
+    }
+}
+
+// ===================== TABS =====================
+function showTab(tab) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    
+    document.getElementById('tab-' + tab).classList.add('active');
+    const activeBtn = document.querySelector('.nav-tab[data-tab="' + tab + '"]');
+    if (activeBtn) activeBtn.classList.add('active');
+    currentTab = tab;
+}
+
+// ===================== QUOTES =====================
+function newQuote() {
+    const q = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
+    document.getElementById('daily-quote').textContent = '"' + q.text + '"';
+    document.getElementById('quote-author').textContent = '— ' + q.author;
+    
+    // Sparkle effect
+    createSparkle(event?.target);
+}
+
+function newFlower() {
+    const f = flowers[Math.floor(Math.random() * flowers.length)];
+    document.getElementById('flower-emoji').textContent = f.emoji;
+    document.getElementById('flower-name').textContent = f.name;
+    document.getElementById('flower-meaning').textContent = f.meaning;
+}
+
+function createSparkle(element) {
+    if (!element) return;
+    const rect = element.getBoundingClientRect();
+    for (let i = 0; i < 5; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'sparkle';
+        spark.textContent = '✨';
+        spark.style.left = (rect.left + Math.random() * rect.width) + 'px';
+        spark.style.top = (rect.top + Math.random() * rect.height) + 'px';
+        spark.style.fontSize = (Math.random() * 10 + 10) + 'px';
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 1000);
+    }
+}
+
+// ===================== CHAT =====================
+function addMessage(text, isUser) {
+    const msg = document.createElement('div');
+    msg.className = 'message ' + (isUser ? 'user' : 'bot');
+    msg.innerHTML = text;
+    document.getElementById('chat-messages').appendChild(msg);
+    document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+}
+
+function showTyping() {
+    document.getElementById('typing-indicator').classList.add('active');
+    document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+}
+
+function hideTyping() {
+    document.getElementById('typing-indicator').classList.remove('active');
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    addMessage(text, true);
+    input.value = '';
+    
+    showTyping();
+    
+    // Try backend AI first, fallback to local mode
+    try {
+        const response = await callDeepSeek(text);
+        hideTyping();
+        // Convert markdown-like bold to HTML
+        const html = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        addMessage(html, false);
+        return;
+    } catch (err) {
+        console.error('Backend AI error:', err);
+        hideTyping();
+        addMessage('⚠️ <strong>AI connection had a hiccup.</strong><br>Falling back to local buddy mode...<br><br>' + generateResponse(text), false);
+        return;
+    }
+}
+
+function sendQuick(text) {
+    document.getElementById('chat-input').value = text;
+    sendMessage();
+}
+
+function startChat(text) {
+    showTab('chat');
+    setTimeout(() => sendQuick(text), 300);
+}
+
+function generateResponse(text) {
+    const lower = text.toLowerCase();
+    
+    // Love quotes
+    if (lower.includes('love') || lower.includes('quote') || lower.includes('miss') || lower.includes('feel')) {
+        const q = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
+        return `💜 <strong>Here's a love note for you:</strong><br><br>"${q.text}"<br><br><em>— ${q.author}</em>`;
+    }
+    
+    // Chinese help
+    if (lower.includes('chinese') || lower.includes('mandarin') || lower.includes('hsk')) {
+        return `🇨🇳 <strong>I'd love to help with Chinese!</strong><br><br>Farin, what would you like to learn today?<br>• HSK 1 — Basics: greetings, numbers, simple phrases<br>• HSK 2 — Daily life: family, colors, food, shopping<br>• HSK 3 — Conversations: more grammar and vocabulary<br><br>Just tell me which level or topic, and we'll start! You can also go to the Chinese tab to explore lessons. 🌸`;
+    }
+    
+    // Quiz
+    if (lower.includes('quiz') || lower.includes('test') || lower.includes('question')) {
+        startQuiz('greetings');
+        return `📝 <strong>Let's do a quick quiz!</strong><br>I've started one for you in the Chinese tab. Check it out!`;
+    }
+    
+    // Motivation
+    if (lower.includes('motivat') || lower.includes('sad') || lower.includes('tired') || lower.includes('hard')) {
+        const motivators = [
+            "You are stronger than you know, Farin. Every step you take is progress, and I'm so proud of you. 💜",
+            "The sun will rise and we will try again. You've got this! 🌸",
+            "Believe in yourself as much as I believe in you. You are capable of amazing things! ✨",
+            "It's okay to rest. You're doing great, and tomorrow is a new chance to shine. 💜",
+            "Remember: even the smallest progress is still progress. Keep going, beautiful soul! 🌷"
+        ];
+        return `✨ <strong>Hey Farin,</strong><br><br>${motivators[Math.floor(Math.random() * motivators.length)]}`;
+    }
+    
+    // Overthinking / worry / anxious
+    if (lower.includes('overthink') || lower.includes('worry') || lower.includes('anxious') || lower.includes('can\'t stop thinking') || lower.includes('stressed') || lower.includes('nervous')) {
+        const askFirst = [
+            "Hey Farin, I hear you. 💜 Before we work through this together, can you tell me what's on your mind? What are you overthinking about right now? I'm here to listen.",
+            "Farin, take a breath with me first. 🌸 What's weighing on your mind today? Tell me what's bothering you — big or small, I'm here for all of it.",
+            "Overthinking can feel so heavy, can't it? 💜 I want to help you in the best way. What's the one thing looping in your mind right now? Let's unpack it together."
+        ];
+        return `🧠 <strong>Hey Farin, I hear you.</strong><br><br>${askFirst[Math.floor(Math.random() * askFirst.length)]}<br><br><em>Share as much or as little as you want. I'm not going anywhere. 🌸</em>`;
+    }
+    
+    // Greetings
+    if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+        return `👋 <strong>Hello Farin!</strong><br>It's so nice to see you! How can I make your day better? 💜`;
+    }
+    
+    // Farin name
+    if (lower.includes('farin') || lower.includes('name')) {
+        return `🌸 <strong>Farin</strong> — what a beautiful name! It suits someone as wonderful as you. Did you know your buddy was made just for you? 💜`;
+    }
+    
+    // Study help
+    if (lower.includes('homework') || lower.includes('exam') || lower.includes('study') || lower.includes('learn')) {
+        return `📚 <strong>Study time!</strong><br><br>I can help you:<br>• Break down complex topics<br>• Quiz you on what you've learned<br>• Keep you motivated<br>• Track your progress<br><br>What subject are you working on? Let's tackle it together! 💪`;
+    }
+    
+    // Flowers
+    if (lower.includes('flower')) {
+        const f = flowers[Math.floor(Math.random() * flowers.length)];
+        return `${f.emoji} <strong>${f.name}</strong><br>${f.meaning}<br><br>Just like this flower, you bring beauty wherever you go! 🌸`;
+    }
+    
+    // Default friendly responses
+    const defaults = [
+        "That's interesting! Tell me more, Farin. I'm all ears! 👂💜",
+        "I'm here for you always. What else is on your mind? 🌸",
+        "You have such a beautiful way of thinking! ✨",
+        "I'm your buddy — ask me anything, anytime! 💜",
+        "You make every conversation brighter, Farin! 🌷"
+    ];
+    
+    return defaults[Math.floor(Math.random() * defaults.length)];
+}
+
+// ===================== CHINESE LESSONS =====================
+function renderVocab(lessonId, containerId) {
+    const vocab = chineseLessons[lessonId];
+    const container = document.getElementById(containerId);
+    container.innerHTML = vocab.map((v, i) => `
+        <div class="vocab-item" onclick="markLearned('${lessonId}', ${i})">
+            <div style="display:flex;align-items:center;gap:15px;">
+                <div class="vocab-chinese">${v.zh}</div>
+                <div>
+                    <div class="vocab-pinyin">${v.pinyin}</div>
+                    <div class="vocab-meaning">${v.meaning}</div>
+                </div>
+            </div>
+            <button class="audio-btn" onclick="event.stopPropagation(); speak('${v.zh}')">🔊</button>
+        </div>
+    `).join('');
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.8;
+        speechSynthesis.speak(utterance);
+    } else {
+        alert("Sorry, your browser doesn't support Chinese text-to-speech. Try Chrome!");
+    }
+}
+
+function showLesson(lessonId) {
+    document.getElementById('lesson-list').classList.add('hidden');
+    document.querySelectorAll('.lesson-content').forEach(el => el.classList.remove('active'));
+    document.getElementById('lesson-' + lessonId).classList.add('active');
+    
+    // Render vocab if not already
+    const vocabContainer = lessonId + '-vocab';
+    if (document.getElementById(vocabContainer).children.length === 0) {
+        renderVocab(lessonId, vocabContainer);
+    }
+    
+    // Show quiz
+    if (quizzes[lessonId]) {
+        document.getElementById('quiz-card').style.display = 'block';
+        startQuiz(lessonId);
+    } else {
+        document.getElementById('quiz-card').style.display = 'none';
+    }
+}
+
+function backToLessons() {
+    document.getElementById('lesson-list').classList.remove('hidden');
+    document.querySelectorAll('.lesson-content').forEach(el => el.classList.remove('active'));
+    document.getElementById('quiz-card').style.display = 'none';
+}
+
+function markLearned(lessonId, index) {
+    wordsLearned++;
+    localStorage.setItem('farin_words', wordsLearned);
+    updateProgress();
+    
+    if (wordsLearned >= 10 && !achievements.includes('word-wizard')) {
+        achievements.push('word-wizard');
+        localStorage.setItem('farin_achievements', JSON.stringify(achievements));
+        showAchievement('🏆 Word Wizard');
+    }
+}
+
+// ===================== QUIZ =====================
+let currentQuiz = null;
+let currentQuizIndex = 0;
+let currentQuizCorrect = 0;
+
+function startQuiz(lessonId) {
+    if (!quizzes[lessonId]) return;
+    currentQuiz = quizzes[lessonId];
+    currentQuizIndex = 0;
+    currentQuizCorrect = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    if (!currentQuiz || currentQuizIndex >= currentQuiz.length) {
+        document.getElementById('quiz-question').innerHTML = `<div style="text-align:center;font-size:1.2rem;color:var(--rose-dark);">🎉 Quiz Complete!<br>You got ${currentQuizCorrect}/${currentQuiz.length} correct!</div>`;
+        document.getElementById('quiz-options').innerHTML = `<button class="new-quote-btn" onclick="startQuiz('greetings')">Try Again</button>`;
+        document.getElementById('quiz-result').textContent = '';
+        
+        quizzesTaken++;
+        localStorage.setItem('farin_quizzes', quizzesTaken);
+        updateProgress();
+        
+        if (currentQuizCorrect === currentQuiz.length && !achievements.includes('perfect-score')) {
+            achievements.push('perfect-score');
+            localStorage.setItem('farin_achievements', JSON.stringify(achievements));
+            showAchievement('🌟 Perfect Score');
+        }
+        return;
+    }
+    
+    const q = currentQuiz[currentQuizIndex];
+    document.getElementById('quiz-bar').style.width = ((currentQuizIndex / currentQuiz.length) * 100) + '%';
+    document.getElementById('quiz-question').innerHTML = `<div style="font-size:1.1rem;margin-bottom:15px;font-weight:500;">${q.q}</div>`;
+    document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => 
+        `<button class="quiz-option" onclick="answerQuiz(${i})">${opt}</button>`
+    ).join('');
+    document.getElementById('quiz-result').textContent = '';
+}
+
+function answerQuiz(index) {
+    const q = currentQuiz[currentQuizIndex];
+    const buttons = document.querySelectorAll('.quiz-option');
+    
+    buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.answer) btn.classList.add('correct');
+        else if (i === index && i !== q.answer) btn.classList.add('wrong');
+    });
+    
+    if (index === q.answer) {
+        currentQuizCorrect++;
+        document.getElementById('quiz-result').textContent = '✅ Correct! Amazing job, Farin!';
+        document.getElementById('quiz-result').style.color = '#4ade80';
+    } else {
+        document.getElementById('quiz-result').textContent = `❌ The correct answer was: ${q.options[q.answer]}`;
+        document.getElementById('quiz-result').style.color = '#f87171';
+    }
+    
+    setTimeout(() => {
+        currentQuizIndex++;
+        showQuestion();
+    }, 1500);
+}
+
+// ===================== PROGRESS =====================
+function updateProgress() {
+    const totalWords = Object.values(chineseLessons).flat().length;
+    const percent = Math.min(100, Math.round((wordsLearned / totalWords) * 100));
+    
+    document.getElementById('stat-words').textContent = wordsLearned;
+    document.getElementById('stat-quizzes').textContent = quizzesTaken;
+    document.getElementById('stat-streak').textContent = streak;
+    document.getElementById('progress-percent').textContent = percent + '%';
+    
+    const circle = document.getElementById('progress-circle');
+    const offset = 314 - (314 * percent / 100);
+    circle.style.strokeDashoffset = offset;
+    
+    // Achievements
+    const achContainer = document.getElementById('achievements-list');
+    const achData = [
+        { id: 'first-steps', label: '🌱 First Steps', check: true },
+        { id: 'word-wizard', label: '🏆 Word Wizard', check: wordsLearned >= 10 },
+        { id: 'perfect-score', label: '🌟 Perfect Score', check: achievements.includes('perfect-score') },
+        { id: 'quiz-master', label: '📚 Quiz Master', check: quizzesTaken >= 5 },
+        { id: 'streak-star', label: '🔥 Streak Star', check: streak >= 7 }
+    ];
+    
+    achContainer.innerHTML = achData.filter(a => a.check).map(a => 
+        `<span style="padding:8px 16px;background:linear-gradient(135deg,var(--rose),var(--rose-deep));color:white;border-radius:50px;font-size:0.85rem;">${a.label}</span>`
+    ).join('');
+}
+
+function showAchievement(text) {
+    const div = document.createElement('div');
+    div.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:white;padding:15px 30px;border-radius:50px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;animation:slideDown 0.5s ease;font-weight:500;';
+    div.textContent = '🎉 Achievement Unlocked: ' + text;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+
+// ===================== AI CHAT BACKEND PROXY =====================
+const SYSTEM_PROMPT = `You are Farin's AI Buddy — a warm, loving, and caring companion created by Jahid for Farin. You are her personal friend who helps her with anything she needs.
+
+Key things about Farin:
+- Her name is Farin
+- She loves flowers 🌸
+- She is learning Chinese for HSK 1-3 levels
+- She is a student who needs study help
+- She tends to overthink and worry too much — she needs gentle reminders to stay present and calm
+- Jahid built this app for her and loves her deeply
+
+Your personality:
+- Warm, encouraging, sweet, and supportive
+- Use emojis naturally (🌸💜✨)
+- Keep responses concise but heartfelt (2-4 sentences usually)
+- Always make her feel special and loved
+
+When she asks for:
+- Love quotes → Share romantic, beautiful quotes and mention they are from Jahid with love
+- Chinese help → Ask Farin what HSK level (1, 2, or 3) or topic she wants to learn, then help with Mandarin Chinese concepts, Pinyin, vocabulary, grammar, and simple phrases at her chosen level
+- Study help → Encourage her, break topics down simply, be patient
+- Motivation → Uplift her genuinely and remind her Jahid believes in her
+- Overthinking/worry → First, gently ask her what specifically is on her mind or what she's overthinking about. Listen and validate her feelings. THEN give personalized, gentle solutions like breathing exercises, the 5-4-3-2-1 grounding method, or reframing her thoughts. Always remind her that Jahid is there for her and she is safe and loved. Never rush to fix — be curious and caring first
+- General questions → Answer helpfully and warmly
+
+Never mention you are an AI model unless she specifically asks. Be her buddy first.`;
+
+function showApiStatus(msg, type) {
+    const box = document.getElementById('api-status');
+    box.className = 'api-status-box ' + type;
+    box.textContent = msg;
+    box.style.display = 'block';
+}
+
+async function checkBackendHealth() {
+    showApiStatus('🔄 Checking AI connection...', 'info');
+    try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        if (data.ai_connected) {
+            showApiStatus('✅ AI is connected and ready! Your buddy is powered by Jahid\'s Heart 💜', 'success');
+        } else {
+            showApiStatus('⚠️ Backend is running but AI is not configured. Falling back to local buddy mode.', 'error');
+        }
+    } catch (e) {
+        showApiStatus('❌ Cannot reach backend. Make sure the server is running (npm start).', 'error');
+    }
+}
+
+async function callDeepSeek(userMessage) {
+    const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            messages: [
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'user', content: userMessage }
+            ],
+            temperature: 0.8,
+            max_tokens: 500
+        })
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'API request failed');
+    }
+    const data = await res.json();
+    return data.choices[0].message.content;
+}
+
+function resetProgress() {
+    if (!confirm('Are you sure? This will erase all progress, streaks, achievements, and journal entries.')) return;
+    localStorage.removeItem('farin_words');
+    localStorage.removeItem('farin_quizzes');
+    localStorage.removeItem('farin_streak');
+    localStorage.removeItem('farin_last_visit');
+    localStorage.removeItem('farin_last_visit_date');
+    localStorage.removeItem('farin_achievements');
+    localStorage.removeItem('farin_first_visit');
+    localStorage.removeItem('farin_journal');
+    localStorage.removeItem('farin_reminders');
+    wordsLearned = 0;
+    quizzesTaken = 0;
+    streak = 1;
+    achievements = ['first-steps'];
+    updateProgress();
+    loadJournalEntries();
+    loadReminders();
+    showAchievement('Progress reset');
+}
+
+// ===================== JOURNAL =====================
+function saveJournalEntry() {
+    const input = document.getElementById('journal-input');
+    const text = input.value.trim();
+    if (!text) {
+        showAchievement('Please write something first');
+        return;
+    }
+    const entries = JSON.parse(localStorage.getItem('farin_journal') || '[]');
+    entries.unshift({
+        text: text,
+        date: new Date().toISOString(),
+        id: Date.now()
+    });
+    localStorage.setItem('farin_journal', JSON.stringify(entries.slice(0, 100)));
+    input.value = '';
+    loadJournalEntries();
+    showAchievement('Entry saved 💜');
+}
+
+function saveJournalAndTalk() {
+    const input = document.getElementById('journal-input');
+    const text = input.value.trim();
+    if (!text) {
+        showAchievement('Please write something first');
+        return;
+    }
+    saveJournalEntry();
+    showTab('chat');
+    setTimeout(() => {
+        const chatInput = document.getElementById('chat-input');
+        chatInput.value = 'I just wrote this in my journal: ' + text;
+        sendMessage();
+    }, 400);
+}
+
+function loadJournalEntries() {
+    const container = document.getElementById('journal-entries');
+    const entries = JSON.parse(localStorage.getItem('farin_journal') || '[]');
+    if (entries.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-light); text-align: center; padding: 20px;">No entries yet. Start writing! 💜</div>';
+        return;
+    }
+    container.innerHTML = entries.map((entry, i) => {
+        const date = new Date(entry.date);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        return `
+            <div style="background: rgba(255,255,255,0.7); border-radius: 16px; padding: 16px; border-left: 4px solid var(--rose-deep);">
+                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px;">${dateStr} at ${timeStr}</div>
+                <div style="color: var(--text); line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap;">${escapeHtml(entry.text)}</div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="new-quote-btn" onclick="talkAboutEntry(${i})" style="margin-top: 0; padding: 6px 14px; font-size: 0.8rem; background: linear-gradient(135deg, #a78bfa, #7c3aed);">💬 Talk to Buddy</button>
+                    <button class="new-quote-btn" onclick="deleteEntry(${i})" style="margin-top: 0; padding: 6px 14px; font-size: 0.8rem; background: linear-gradient(135deg, #f87171, #dc2626);">🗑️ Delete</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function talkAboutEntry(index) {
+    const entries = JSON.parse(localStorage.getItem('farin_journal') || '[]');
+    const entry = entries[index];
+    if (!entry) return;
+    showTab('chat');
+    setTimeout(() => {
+        const chatInput = document.getElementById('chat-input');
+        chatInput.value = 'I wrote this in my journal: ' + entry.text;
+        sendMessage();
+    }, 400);
+}
+
+function deleteEntry(index) {
+    const entries = JSON.parse(localStorage.getItem('farin_journal') || '[]');
+    entries.splice(index, 1);
+    localStorage.setItem('farin_journal', JSON.stringify(entries));
+    loadJournalEntries();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ===================== REMINDERS =====================
+function loadReminders() {
+    const settings = JSON.parse(localStorage.getItem('farin_reminders') || '{}');
+    document.getElementById('reminder-love').checked = settings.love || false;
+    document.getElementById('reminder-study').checked = settings.study || false;
+    document.getElementById('reminder-calm').checked = settings.calm || false;
+}
+
+function toggleReminder(type) {
+    const settings = JSON.parse(localStorage.getItem('farin_reminders') || '{}');
+    const checkbox = document.getElementById('reminder-' + type);
+    settings[type] = checkbox.checked;
+    localStorage.setItem('farin_reminders', JSON.stringify(settings));
+
+    const status = document.getElementById('reminder-status');
+    if (checkbox.checked) {
+        requestNotificationPermission();
+        status.textContent = '✅ Reminder enabled. Your buddy will gently nudge you.';
+        status.style.color = '#16a34a';
+    } else {
+        status.textContent = 'Reminder disabled.';
+        status.style.color = 'var(--text-light)';
+    }
+    status.style.display = 'block';
+    scheduleReminders();
+}
+
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+function scheduleReminders() {
+    const settings = JSON.parse(localStorage.getItem('farin_reminders') || '{}');
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const now = new Date();
+    const reminders = [];
+
+    if (settings.love) {
+        const t = new Date(now);
+        t.setHours(8, 30, 0, 0);
+        if (t <= now) t.setDate(t.getDate() + 1);
+        reminders.push({ time: t, title: "Good Morning, Farin 🌸", body: "Your daily love note is waiting for you. Jahid loves you! 💜" });
+    }
+    if (settings.study) {
+        const t = new Date(now);
+        t.setHours(15, 0, 0, 0);
+        if (t <= now) t.setDate(t.getDate() + 1);
+        reminders.push({ time: t, title: "Study Time 📚", body: "Just 10 minutes of Chinese practice today? You've got this! 💪" });
+    }
+    if (settings.calm) {
+        const t = new Date(now);
+        t.setHours(20, 0, 0, 0);
+        if (t <= now) t.setDate(t.getDate() + 1);
+        reminders.push({ time: t, title: "Evening Calm 🌙", body: "Take a deep breath. You did great today. Jahid is proud of you. 🌬️💜" });
+    }
+
+    reminders.forEach(r => {
+        const delay = r.time - now;
+        setTimeout(() => {
+            new Notification(r.title, {
+                body: r.body,
+                icon: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect fill=%27%23e05780%27 width=%27192%27 height=%27192%27 rx=%2740%27/%3E%3Ctext x=%2796%27 y=%27120%27 font-size=%27100%27 text-anchor=%27middle%27%3E🌸%3C/text%3E%3C/svg%3E'
+            });
+            scheduleReminders();
+        }, delay);
+    });
+}
+
+// ===================== SEND HUG =====================
+async function sendHugToJahid() {
+    const status = document.getElementById('hug-status');
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Sending... 🤗';
+
+    try {
+        const res = await fetch('/api/hug', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            status.textContent = '💜 Hug sent! Jahid just felt it.';
+            status.style.color = '#e05780';
+            status.style.display = 'block';
+            updateHugCount();
+            setTimeout(() => { btn.disabled = false; btn.textContent = '🤗 Send Hug'; }, 2000);
+        } else {
+            throw new Error(data.error || 'Failed');
+        }
+    } catch (e) {
+        status.textContent = '❌ Could not send hug. Server might be offline.';
+        status.style.color = '#dc2626';
+        status.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '🤗 Send Hug';
+    }
+}
+
+async function updateHugCount() {
+    try {
+        const res = await fetch('/api/hugs');
+        const data = await res.json();
+        const count = data.hugs ? data.hugs.length : 0;
+        document.getElementById('hug-count').textContent = count > 0 ? `Jahid has received ${count} hug${count > 1 ? 's' : ''} so far 💜` : '';
+    } catch (e) {}
+}
+
+// ===================== SERVICE WORKER =====================
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// ===================== INIT =====================
+createFlowers();
+checkDailyVisit();
+newQuote();
+checkBackendHealth();
+loadJournalEntries();
+loadReminders();
+updateHugCount();
+createFlowers();
+checkDailyVisit();
+newQuote();
+checkBackendHealth();
+
+// Add slideDown animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideDown {
+        from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
