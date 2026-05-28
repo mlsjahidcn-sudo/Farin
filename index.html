@@ -32,6 +32,10 @@
             min-height: 100vh;
             color: var(--text);
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
         /* Floating Flowers Animation */
@@ -215,13 +219,16 @@
         /* Main App */
         #main-app {
             display: none;
-            min-height: 100vh;
             position: relative;
             z-index: 1;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
         }
 
         #main-app.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Header */
@@ -281,12 +288,16 @@
             display: none;
             max-width: 900px;
             margin: 0 auto;
-            padding: 0 20px 40px;
+            padding: 0 20px 20px;
             animation: fadeIn 0.4s ease;
         }
 
         .content-section.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
         }
 
         @keyframes fadeIn {
@@ -303,6 +314,14 @@
             margin-bottom: 20px;
             box-shadow: 0 8px 30px var(--shadow);
             border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        #tab-chat > .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            margin-bottom: 0;
         }
 
         .card-title {
@@ -366,8 +385,8 @@
 
         /* Chat Section */
         .chat-container {
-            min-height: 55vh;
-            max-height: 65vh;
+            flex: 1;
+            min-height: 0;
             display: flex;
             flex-direction: column;
             background: rgba(255,255,255,0.5);
@@ -378,6 +397,7 @@
 
         .chat-messages {
             flex: 1;
+            min-height: 0;
             overflow-y: auto;
             padding: 8px;
             display: flex;
@@ -542,8 +562,16 @@
         .quick-chips {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
             margin-bottom: 14px;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .quick-chips::-webkit-scrollbar {
+            display: none;
         }
 
         .chip {
@@ -557,6 +585,7 @@
             color: var(--text);
             font-weight: 500;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .chip:hover {
@@ -801,7 +830,7 @@
         @media (max-width: 600px) {
             .app-title { font-size: 1.7rem; }
             .gift-text { font-size: 1.5rem; }
-            .chat-container { min-height: 50vh; max-height: 60vh; }
+            .chip { padding: 8px 14px; font-size: 0.85rem; }
             .nav-tab { padding: 8px 16px; font-size: 0.85rem; }
             .lesson-grid { grid-template-columns: 1fr; }
             .progress-stats { grid-template-columns: 1fr; }
