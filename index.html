@@ -18,6 +18,28 @@
             --text-light: #7a7a9a;
             --white: #ffffff;
             --shadow: rgba(224, 87, 128, 0.15);
+            --bg-gradient: linear-gradient(135deg, var(--cream) 0%, var(--lavender) 50%, var(--rose) 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 183, 197, 0.3);
+            --input-bg: #ffffff;
+            --input-border: var(--rose);
+        }
+
+        [data-theme="dark"] {
+            --rose: #e05780;
+            --rose-deep: #c2185b;
+            --rose-dark: #ffb7c5;
+            --lavender: #2d2d4a;
+            --cream: #1a1a2e;
+            --text: #f0e6e8;
+            --text-light: #b8a8b0;
+            --white: #252540;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #2d2d4a 50%, #1a1a2e 100%);
+            --card-bg: rgba(37, 37, 64, 0.9);
+            --card-border: rgba(224, 87, 128, 0.4);
+            --input-bg: #252540;
+            --input-border: var(--rose-deep);
         }
 
         * {
@@ -32,7 +54,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, var(--cream) 0%, var(--lavender) 50%, var(--rose) 100%);
+            background: var(--bg-gradient);
             min-height: 100vh;
             color: var(--text);
             overflow-x: hidden;
@@ -40,6 +62,11 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: var(--bg-gradient);
         }
 
         /* Floating Flowers Animation */
@@ -295,7 +322,9 @@
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px 20px;
-            animation: fadeIn 0.4s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .content-section.active {
@@ -304,24 +333,22 @@
             flex: 1;
             overflow-y: auto;
             min-height: 0;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Cards */
         .card {
-            background: rgba(255,255,255,0.85);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 20px;
             box-shadow: 0 8px 30px var(--shadow);
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid var(--card-border);
             overflow-wrap: break-word;
             word-break: break-word;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         #tab-chat > .card {
@@ -492,22 +519,22 @@
             flex-direction: column;
             gap: 12px;
             padding: 20px 0 0;
-            border-top: 1px solid #EAEAEA;
+            border-top: 1px solid var(--card-border);
             margin-top: 8px;
         }
 
         .chat-input {
             width: 100%;
             padding: 14px 18px;
-            border: 1px solid #EAEAEA;
+            border: 2px solid var(--input-border);
             border-radius: 6px;
             font-size: 0.95rem;
             outline: none;
-            background: #F7F6F3;
-            font-family: 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: var(--input-bg);
+            font-family: 'Poppins', sans-serif;
             transition: all 0.2s;
             min-height: 48px;
-            color: #2F3437;
+            color: var(--text);
         }
 
         .chat-input:focus {
@@ -525,7 +552,7 @@
             width: 100%;
             height: 44px;
             border-radius: 6px;
-            background: #111111;
+            background: linear-gradient(135deg, var(--rose-deep), var(--rose-dark));
             color: #FFFFFF;
             border: none;
             cursor: pointer;
@@ -540,7 +567,8 @@
         }
 
         .chat-send:hover {
-            background: #333333;
+            background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+            box-shadow: 0 4px 15px rgba(224, 87, 128, 0.4);
         }
 
         .chat-send:active {
@@ -592,34 +620,45 @@
         /* Chinese Study */
         .lesson-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 100%;
         }
 
         .lesson-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,240,245,0.9));
             border-radius: 16px;
-            padding: 20px;
+            padding: 24px 20px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            min-height: 140px;
+            width: 100%;
         }
 
         .lesson-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px var(--shadow);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px var(--shadow);
             border-color: var(--rose);
         }
 
+        .lesson-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
         .lesson-emoji {
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            line-height: 1;
         }
 
         .lesson-title {
             font-weight: 600;
             color: var(--rose-dark);
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         .lesson-desc {
@@ -814,12 +853,102 @@
             45% { transform: scale(1.15); }
         }
 
-        /* Responsive */
-        .welcome-grid {
+        .welcome-hero {
+            position: relative;
+            padding: 40px 24px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .welcome-hero-decoration {
+            font-size: 5rem;
+            opacity: 0.2;
+            position: absolute;
+            top: -10px;
+            right: 10%;
+            transform: rotate(15deg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: rotate(15deg) translateY(0); }
+            50% { transform: rotate(15deg) translateY(-10px); }
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--rose-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .features-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .feature-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 20px 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 183, 197, 0.3);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--rose);
+            box-shadow: 0 12px 32px rgba(224, 87, 128, 0.15);
+        }
+
+        .feature-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: var(--rose-dark);
+            font-size: 0.95rem;
+        }
+
+        .feature-desc {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .welcome-footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 600px) {
@@ -831,35 +960,267 @@
             .gift-emoji { font-size: 100px; }
             .card { padding: 14px; margin-bottom: 12px; border-radius: 14px; }
             .card-title { font-size: 1.1rem; }
-            .chip { padding: 7px 12px; font-size: 0.82rem; }
-            .nav-tab { padding: 6px 10px; font-size: 0.75rem; }
-            .nav-tabs { gap: 4px; padding: 0 8px 10px; }
-            .lesson-grid { grid-template-columns: 1fr; }
-            .lesson-card { padding: 14px; }
+            .chip { padding: 7px 12px; font-size: 0.82rem; min-height: 44px; display: flex; align-items: center; }
+            .nav-tab { padding: 8px 12px; font-size: 0.75rem; min-height: 44px; white-space: nowrap; }
+            .nav-tabs { gap: 4px; padding: 0 8px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .nav-tabs::-webkit-scrollbar { display: none; }
+            .lesson-grid { 
+                grid-template-columns: 1fr; 
+                gap: 12px;
+            }
+            .lesson-card { 
+                padding: 20px 16px; 
+                min-height: 120px;
+            }
+            .lesson-emoji { font-size: 2rem; }
+            .lesson-title { font-size: 1rem; }
+            .lesson-desc { font-size: 0.85rem; }
             .progress-stats { grid-template-columns: 1fr; }
-            .message { max-width: 92%; padding: 12px 16px; font-size: 0.95rem; }
-            .chat-container { padding: 16px; border-radius: 8px; }
-            .chat-input { padding: 12px 14px; min-height: 44px; font-size: 0.9rem; }
-            .chat-send { height: 40px; font-size: 0.85rem; border-radius: 6px; }
-            .message { max-width: 90%; padding: 12px 14px; font-size: 0.9rem; }
+            .message { max-width: 85%; padding: 12px 14px; font-size: 0.9rem; line-height: 1.5; }
+            .chat-container { padding: 14px; border-radius: 8px; }
+            .chat-messages { padding: 6px 0; gap: 14px; }
+            .chat-input-area { flex-direction: column; gap: 10px; }
+            .chat-input { padding: 12px 14px; min-height: 48px; font-size: 0.9rem; width: 100%; border-radius: 8px; }
+            .chat-send { height: 48px; font-size: 0.9rem; border-radius: 8px; width: 100%; }
             .content-section { padding: 0 12px 12px; }
-            .quote-text { font-size: 1rem; }
-            .welcome-grid { grid-template-columns: 1fr; }
+            .quote-display { padding: 20px; }
+            .quote-text { font-size: 1rem; line-height: 1.6; }
+            .quote-badge { font-size: 0.8rem; padding: 6px 12px; }
+            .welcome-hero { padding: 30px 16px; margin-bottom: 20px; }
+            .welcome-hero-decoration { font-size: 4rem; right: 5%; }
+            .welcome-title { font-size: 2rem; }
+            .welcome-subtitle { font-size: 0.9rem; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .feature-card { padding: 16px 10px; }
+            .feature-icon { font-size: 1.75rem; }
+            .feature-title { font-size: 0.85rem; }
+            .feature-desc { font-size: 0.7rem; }
+            .welcome-footer { font-size: 0.8rem; margin-bottom: 16px; }
             .envelope-wrapper { max-width: 280px; }
-            .letter-paper { padding: 24px; }
-            .vocab-item { flex-direction: column; align-items: flex-start; gap: 6px; }
-            .vocab-info { text-align: left; }
-            .vocab-chinese { font-size: 1.3rem; }
-            .quiz-option { padding: 12px 14px; font-size: 0.95rem; }
+            .letter-paper { padding: 20px; }
+            .letter-title { font-size: 1.2rem; }
+            .letter-body { font-size: 0.9rem; }
+            .vocab-item { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; }
+            .vocab-info { text-align: left; width: 100%; }
+            .vocab-chinese { font-size: 1.4rem; }
+            .vocab-pinyin { font-size: 0.85rem; }
+            .vocab-meaning { font-size: 0.9rem; }
+            .vocab-actions { display: flex; gap: 8px; width: 100%; }
+            .audio-btn { min-height: 44px; min-width: 44px; }
+            .quiz-option { padding: 14px; font-size: 0.9rem; }
+            .quiz-progress { height: 8px; }
             .stat-number { font-size: 1.4rem; }
-            #tab-journal .new-quote-btn { width: 100%; }
+            .stat-box { padding: 16px; }
+            .stat-label { font-size: 0.85rem; }
+            .progress-ring { width: 100px; height: 100px; }
+            #tab-journal .new-quote-btn { width: 100%; margin: 0; }
             #tab-journal div[style*="display: flex; gap: 10px"] { flex-direction: column; }
-            #tab-settings .new-quote-btn { padding: 12px 20px; font-size: 1rem; }
+            #tab-journal textarea { min-height: 150px; padding: 14px; }
+            #tab-settings .new-quote-btn { padding: 14px 20px; font-size: 0.95rem; width: 100%; margin: 5px 0; }
+            #tab-settings div[style*="display: flex; gap: 10px"] { flex-direction: column; }
+            #achievements-list { justify-content: center; }
+            .flower-item { flex-direction: column; text-align: center; gap: 10px; padding: 16px; }
+            .flower-info { text-align: center; }
+            .back-btn { padding: 12px 20px; font-size: 0.9rem; width: 100%; }
+            .new-quote-btn { padding: 14px 20px; font-size: 0.95rem; width: 100%; }
+            .quick-chips { flex-wrap: wrap; justify-content: center; gap: 8px; }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 2px dashed var(--card-border);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .empty-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            max-width: 280px;
+        }
+
+        .quiz-complete {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .quiz-complete-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: bounce 0.6s ease-out;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .quiz-complete-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--rose-dark);
+            margin-bottom: 12px;
+        }
+
+        .quiz-complete-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .quiz-complete-percent {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin: 8px 0;
+        }
+
+        .quiz-complete-message {
+            font-size: 1rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .theme-toggle {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 30px;
+        }
+
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--lavender), var(--rose));
+            transition: 0.3s;
+            border-radius: 30px;
+            border: 2px solid var(--rose-dark);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "☀️";
+            font-size: 1rem;
+            height: 22px;
+            width: 22px;
+            left: 2px;
+            bottom: 2px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #2d2d4a, #1a1a2e);
+            border-color: var(--rose);
+        }
+
+        .theme-toggle input:checked + .toggle-slider:before {
+            content: "🌙";
+            transform: translateX(26px);
         }
 
         @media (max-width: 380px) {
-            .app-title { font-size: 1.25rem; }
-            .nav-tab { padding: 5px 8px; font-size: 0.7rem; }
+            .app-title { font-size: 1.2rem; }
+            .app-subtitle { font-size: 0.75rem; }
+            .nav-tab { padding: 8px 10px; font-size: 0.7rem; min-height: 44px; }
+            .card { padding: 12px; margin-bottom: 10px; }
+            .card-title { font-size: 1rem; }
+            .message { max-width: 88%; padding: 10px 12px; font-size: 0.85rem; }
+            .chat-input { min-height: 44px; font-size: 0.85rem; }
+            .chat-send { height: 44px; font-size: 0.85rem; }
+            .quote-text { font-size: 0.95rem; }
+            .quote-author { font-size: 0.85rem; }
+            .welcome-hero { padding: 24px 12px; margin-bottom: 16px; }
+            .welcome-hero-decoration { font-size: 3rem; }
+            .welcome-title { font-size: 1.75rem; }
+            .welcome-subtitle { font-size: 0.85rem; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .feature-card { padding: 14px 8px; }
+            .feature-icon { font-size: 1.5rem; }
+            .feature-title { font-size: 0.8rem; }
+            .feature-desc { display: none; }
+            .welcome-footer { font-size: 0.75rem; }
+            .vocab-chinese { font-size: 1.3rem; }
+            .vocab-item { padding: 12px; }
+            .lesson-grid { gap: 10px; }
+            .lesson-card { 
+                padding: 16px 14px; 
+                min-height: 100px;
+            }
+            .lesson-emoji { font-size: 1.75rem; }
+            .lesson-title { font-size: 0.95rem; }
+            .lesson-desc { font-size: 0.8rem; }
+            .stat-number { font-size: 1.2rem; }
+            .stat-box { padding: 12px; }
+            .new-quote-btn { padding: 12px 16px; font-size: 0.9rem; }
+            .flower-item { padding: 12px; }
+            .back-btn { padding: 10px 16px; font-size: 0.85rem; }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            .features-grid { grid-template-columns: repeat(3, 1fr); }
+            .lesson-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 14px;
+            }
+            .lesson-card { padding: 20px; }
+            .nav-tab { padding: 8px 14px; font-size: 0.82rem; }
+            .card { padding: 18px; }
+            .message { max-width: 75%; }
+            .chat-container { padding: 18px; }
+        }
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .app-title { font-size: 1.6rem; }
+            .card { padding: 20px; }
+            .lesson-grid { 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 16px;
+            }
+            .lesson-card { padding: 24px 20px; }
+            .welcome-title { font-size: 2.2rem; }
+            .features-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
         }
 
         /* Sparkle effect */
@@ -1167,29 +1528,48 @@
 
     <!-- HOME TAB -->
     <section class="content-section active" id="tab-home">
-        <div class="card" style="background: linear-gradient(135deg, #fff0f5, #f3e8ff); border: 2px solid var(--rose); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; opacity: 0.15; transform: rotate(15deg);">🌸</div>
-            <div class="card-title">💜 Welcome, Farin!</div>
-            <div style="color: var(--text); line-height: 1.8; font-size: 0.95rem;">
-                <p style="margin-bottom: 12px;">
-                    This little app was built by <strong>Jahid</strong> just for <strong>you</strong> — because he loves you deeply and wants to be there for you, even when he can't be right by your side.
-                </p>
-                <p style="margin-bottom: 12px;">
-                    <strong>Your AI Buddy can help you with:</strong>
-                </p>
-                <div class="welcome-grid">
-                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 12px; font-size: 0.88rem;">💬 <strong>Chat anytime</strong> — about anything on your mind</div>
-                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 12px; font-size: 0.88rem;">🇨🇳 <strong>Learn Chinese</strong> — HSK 1 to 3 with lessons & quizzes</div>
-                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 12px; font-size: 0.88rem;">📝 <strong>Private Journal</strong> — write your thoughts safely</div>
-                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 12px; font-size: 0.88rem;">🧠 <strong>Stop Overthinking</strong> — gentle grounding & calm support</div>
-                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 12px; font-size: 0.88rem;">💜 <strong>Love Notes</strong> — sweet messages from Jahid every day</div>
-                    <div style="background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 12px; font-size: 0.88rem;">🤗 <strong>Send Hugs</strong> — let Jahid know you're thinking of him</div>
-                </div>
-                <p style="font-size: 0.9rem; color: var(--text-light);">
-                    You are never alone here, Farin. Jahid built this with all his love, just for you. 🌸
-                </p>
+        <div class="welcome-hero">
+            <div class="welcome-hero-decoration">🌸</div>
+            <div class="welcome-content">
+                <h1 class="welcome-title" id="greeting-title">Hello, Farin</h1>
+                <p class="welcome-subtitle" id="greeting-subtitle">Your personal space, built with love by Jahid</p>
             </div>
         </div>
+
+        <div class="features-grid">
+            <div class="feature-card" onclick="showTab('chat')">
+                <span class="feature-icon">💬</span>
+                <span class="feature-title">Chat</span>
+                <span class="feature-desc">Talk anytime</span>
+            </div>
+            <div class="feature-card" onclick="showTab('chinese')">
+                <span class="feature-icon">🇨🇳</span>
+                <span class="feature-title">Learn</span>
+                <span class="feature-desc">Chinese lessons</span>
+            </div>
+            <div class="feature-card" onclick="showTab('journal')">
+                <span class="feature-icon">📝</span>
+                <span class="feature-title">Journal</span>
+                <span class="feature-desc">Your safe space</span>
+            </div>
+            <div class="feature-card" onclick="showTab('chat'); startChat('I need some calm')">
+                <span class="feature-icon">🧠</span>
+                <span class="feature-title">Calm</span>
+                <span class="feature-desc">Find peace</span>
+            </div>
+            <div class="feature-card" onclick="newQuote()">
+                <span class="feature-icon">💜</span>
+                <span class="feature-title">Love</span>
+                <span class="feature-desc">Sweet notes</span>
+            </div>
+            <div class="feature-card" onclick="sendHug()">
+                <span class="feature-icon">🤗</span>
+                <span class="feature-title">Hugs</span>
+                <span class="feature-desc">For Jahid</span>
+            </div>
+        </div>
+
+        <p class="welcome-footer">Made with love, just for you</p>
 
         <div class="card">
             <div class="quote-display">
@@ -1202,10 +1582,10 @@
 
         <div class="card">
             <div class="card-title">🌺 Flower of the Day</div>
-            <div style="text-align: center; padding: 20px;">
+            <div class="flower-item" style="text-align: center; padding: 20px;">
                 <div style="font-size: 4rem; margin-bottom: 10px;" id="flower-emoji">🌸</div>
-                <div style="font-weight: 600; color: var(--rose-dark); font-size: 1.1rem;" id="flower-name">Cherry Blossom</div>
-                <div style="color: var(--text-light); margin-top: 8px; font-size: 0.9rem;" id="flower-meaning">Love, beauty, and the fragility of life</div>
+                <div class="flower-info" style="font-weight: 600; color: var(--rose-dark); font-size: 1.1rem;" id="flower-name">Cherry Blossom</div>
+                <div class="flower-info" style="color: var(--text-light); margin-top: 8px; font-size: 0.9rem;" id="flower-meaning">Love, beauty, and the fragility of life</div>
             </div>
         </div>
 
@@ -1372,7 +1752,11 @@
         <div class="card">
             <div class="card-title">📚 Past Entries</div>
             <div id="journal-entries" style="display: flex; flex-direction: column; gap: 12px;">
-                <div style="color: var(--text-light); text-align: center; padding: 20px;">No entries yet. Start writing! 💜</div>
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <div class="empty-title">Your journal awaits</div>
+                    <div class="empty-text">Start writing your first entry above. Every thought matters.</div>
+                </div>
             </div>
         </div>
     </section>
@@ -1422,6 +1806,27 @@
 
     <!-- SETTINGS TAB -->
     <section class="content-section" id="tab-settings">
+        <div class="card">
+            <div class="card-title">🎨 Appearance</div>
+            <div style="margin-bottom: 15px; color: var(--text-light); font-size: 0.9rem;">
+                Customize how Farin's Buddy looks for you.
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--card-border);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.5rem;">🌙</span>
+                    <div>
+                        <div style="font-weight: 500; color: var(--text);">Dark Mode</div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">Easier on the eyes at night</div>
+                    </div>
+                </div>
+                <label class="theme-toggle">
+                    <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" style="display: none;">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-title">🤖 AI Status</div>
             <div style="margin-bottom: 15px; color: var(--text-light); font-size: 0.9rem;">
@@ -1641,7 +2046,11 @@ const chineseLessons = {
         { zh: "晚安", pinyin: "wǎn ān", meaning: "Good night", audio: "wan an" },
         { zh: "你好吗", pinyin: "nǐ hǎo ma", meaning: "How are you?", audio: "ni hao ma" },
         { zh: "我叫Farin", pinyin: "wǒ jiào Farin", meaning: "My name is Farin", audio: "wo jiao" },
-        { zh: "很高兴认识你", pinyin: "hěn gāo xìng rèn shi nǐ", meaning: "Nice to meet you", audio: "hen gao xing ren shi ni" }
+        { zh: "很高兴认识你", pinyin: "hěn gāo xìng rèn shi nǐ", meaning: "Nice to meet you", audio: "hen gao xing ren shi ni" },
+        { zh: "请问", pinyin: "qǐng wèn", meaning: "Excuse me (polite)", audio: "qing wen" },
+        { zh: "打扰一下", pinyin: "dǎ rǎo yī xià", meaning: "Excuse me (interrupting)", audio: "da rao yi xia" },
+        { zh: "不客气", pinyin: "bù kè qi", meaning: "You're welcome", audio: "bu ke qi" },
+        { zh: "再见, 明天见", pinyin: "zài jiàn, míng tiān jiàn", meaning: "Goodbye, see you tomorrow", audio: "zai jian ming tian jian" }
     ],
     numbers: [
         { zh: "一", pinyin: "yī", meaning: "One", audio: "yi" },
@@ -1653,7 +2062,12 @@ const chineseLessons = {
         { zh: "七", pinyin: "qī", meaning: "Seven", audio: "qi" },
         { zh: "八", pinyin: "bā", meaning: "Eight", audio: "ba" },
         { zh: "九", pinyin: "jiǔ", meaning: "Nine", audio: "jiu" },
-        { zh: "十", pinyin: "shí", meaning: "Ten", audio: "shi" }
+        { zh: "十", pinyin: "shí", meaning: "Ten", audio: "shi" },
+        { zh: "百", pinyin: "bǎi", meaning: "Hundred", audio: "bai" },
+        { zh: "千", pinyin: "qiān", meaning: "Thousand", audio: "qian" },
+        { zh: "第一", pinyin: "dì yī", meaning: "First", audio: "di yi" },
+        { zh: "第二", pinyin: "dì èr", meaning: "Second", audio: "di er" },
+        { zh: "零", pinyin: "líng", meaning: "Zero", audio: "ling" }
     ],
     phrases: [
         { zh: "我爱你", pinyin: "wǒ ài nǐ", meaning: "I love you", audio: "wo ai ni" },
@@ -1665,7 +2079,12 @@ const chineseLessons = {
         { zh: "厕所在哪里", pinyin: "cè suǒ zài nǎ lǐ", meaning: "Where is the bathroom?", audio: "ce suo zai na li" },
         { zh: "我是学生", pinyin: "wǒ shì xué sheng", meaning: "I am a student", audio: "wo shi xue sheng" },
         { zh: "今天天气很好", pinyin: "jīn tiān tiān qì hěn hǎo", meaning: "The weather is good today", audio: "jin tian tian qi hen hao" },
-        { zh: "你很漂亮", pinyin: "nǐ hěn piào liang", meaning: "You are beautiful", audio: "ni hen piao liang" }
+        { zh: "你很漂亮", pinyin: "nǐ hěn piào liang", meaning: "You are beautiful", audio: "ni hen piao liang" },
+        { zh: "我累了", pinyin: "wǒ lèi le", meaning: "I am tired", audio: "wo lei le" },
+        { zh: "我很开心", pinyin: "wǒ hěn kāi xīn", meaning: "I am very happy", audio: "wo hen kai xin" },
+        { zh: "等一下", pinyin: "děng yī xià", meaning: "Wait a moment", audio: "deng yi xia" },
+        { zh: "太贵了", pinyin: "tài guì le", meaning: "Too expensive", audio: "tai gui le" },
+        { zh: "好吃", pinyin: "hǎo chī", meaning: "Delicious", audio: "hao chi" }
     ],
     family: [
         { zh: "妈妈", pinyin: "mā ma", meaning: "Mother/Mom", audio: "ma ma" },
@@ -1675,7 +2094,14 @@ const chineseLessons = {
         { zh: "弟弟", pinyin: "dì di", meaning: "Younger brother", audio: "di di" },
         { zh: "妹妹", pinyin: "mèi mei", meaning: "Younger sister", audio: "mei mei" },
         { zh: "朋友", pinyin: "péng yǒu", meaning: "Friend", audio: "peng you" },
-        { zh: "家人", pinyin: "jiā rén", meaning: "Family", audio: "jia ren" }
+        { zh: "家人", pinyin: "jiā rén", meaning: "Family", audio: "jia ren" },
+        { zh: "爷爷", pinyin: "yé ye", meaning: "Grandfather", audio: "ye ye" },
+        { zh: "奶奶", pinyin: "nǎi nai", meaning: "Grandmother", audio: "nai nai" },
+        { zh: "叔叔", pinyin: "shū shu", meaning: "Uncle", audio: "shu shu" },
+        { zh: "阿姨", pinyin: "ā yí", meaning: "Aunt", audio: "a yi" },
+        { zh: "宝宝", pinyin: "bǎo bǎo", meaning: "Baby", audio: "bao bao" },
+        { zh: "老师", pinyin: "lǎo shī", meaning: "Teacher", audio: "lao shi" },
+        { zh: "同学", pinyin: "tóng xué", meaning: "Classmate", audio: "tong xue" }
     ],
     colors: [
         { zh: "红色", pinyin: "hóng sè", meaning: "Red", audio: "hong se" },
@@ -1685,7 +2111,14 @@ const chineseLessons = {
         { zh: "白色", pinyin: "bái sè", meaning: "White", audio: "bai se" },
         { zh: "黑色", pinyin: "hēi sè", meaning: "Black", audio: "hei se" },
         { zh: "粉色", pinyin: "fěn sè", meaning: "Pink", audio: "fen se" },
-        { zh: "紫色", pinyin: "zǐ sè", meaning: "Purple", audio: "zi se" }
+        { zh: "紫色", pinyin: "zǐ sè", meaning: "Purple", audio: "zi se" },
+        { zh: "橙色", pinyin: "chéng sè", meaning: "Orange", audio: "cheng se" },
+        { zh: "棕色", pinyin: "zōng sè", meaning: "Brown", audio: "zong se" },
+        { zh: "灰色", pinyin: "huī sè", meaning: "Gray", audio: "hui se" },
+        { zh: "金色", pinyin: "jīn sè", meaning: "Gold", audio: "jin se" },
+        { zh: "银色", pinyin: "yín sè", meaning: "Silver", audio: "yin se" },
+        { zh: "深色", pinyin: "shēn sè", meaning: "Dark color", audio: "shen se" },
+        { zh: "浅色", pinyin: "qiǎn sè", meaning: "Light color", audio: "qian se" }
     ],
     food: [
         { zh: "水", pinyin: "shuǐ", meaning: "Water", audio: "shui" },
@@ -1695,7 +2128,14 @@ const chineseLessons = {
         { zh: "面包", pinyin: "miàn bāo", meaning: "Bread", audio: "mian bao" },
         { zh: "水果", pinyin: "shuǐ guǒ", meaning: "Fruit", audio: "shui guo" },
         { zh: "肉", pinyin: "ròu", meaning: "Meat", audio: "rou" },
-        { zh: "鱼", pinyin: "yú", meaning: "Fish", audio: "yu" }
+        { zh: "鱼", pinyin: "yú", meaning: "Fish", audio: "yu" },
+        { zh: "鸡蛋", pinyin: "jī dàn", meaning: "Egg", audio: "ji dan" },
+        { zh: "牛奶", pinyin: "niú nǎi", meaning: "Milk", audio: "niu nai" },
+        { zh: "咖啡", pinyin: "kā fēi", meaning: "Coffee", audio: "ka fei" },
+        { zh: "可乐", pinyin: "kě lè", meaning: "Cola", audio: "ke le" },
+        { zh: "米饭", pinyin: "mǐ fàn", meaning: "Rice", audio: "mi fan" },
+        { zh: "饺子", pinyin: "jiǎo zi", meaning: "Dumplings", audio: "jiao zi" },
+        { zh: "包子", pinyin: "bāo zi", meaning: "Steamed bun", audio: "bao zi" }
     ]
 };
 
@@ -1855,13 +2295,29 @@ function checkDailyVisit() {
 
 // ===================== TABS =====================
 function showTab(tab) {
-    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    const sections = document.querySelectorAll('.content-section');
+    const tabs = document.querySelectorAll('.nav-tab');
     
-    document.getElementById('tab-' + tab).classList.add('active');
-    const activeBtn = document.querySelector('.nav-tab[data-tab="' + tab + '"]');
-    if (activeBtn) activeBtn.classList.add('active');
-    currentTab = tab;
+    sections.forEach(s => {
+        s.style.opacity = '0';
+        s.style.transform = 'translateY(10px)';
+    });
+    
+    setTimeout(() => {
+        sections.forEach(s => s.classList.remove('active'));
+        tabs.forEach(t => t.classList.remove('active'));
+        
+        const activeSection = document.getElementById('tab-' + tab);
+        if (activeSection) {
+            activeSection.classList.add('active');
+            activeSection.style.opacity = '1';
+            activeSection.style.transform = 'translateY(0)';
+        }
+        
+        const activeBtn = document.querySelector('.nav-tab[data-tab="' + tab + '"]');
+        if (activeBtn) activeBtn.classList.add('active');
+        currentTab = tab;
+    }, 150);
 }
 
 // ===================== QUOTES =====================
@@ -2107,15 +2563,33 @@ function startQuiz(lessonId) {
 
 function showQuestion() {
     if (!currentQuiz || currentQuizIndex >= currentQuiz.length) {
-        document.getElementById('quiz-question').innerHTML = `<div style="text-align:center;font-size:1.2rem;color:var(--rose-dark);">🎉 Quiz Complete!<br>You got ${currentQuizCorrect}/${currentQuiz.length} correct!</div>`;
-        document.getElementById('quiz-options').innerHTML = `<button class="new-quote-btn" onclick="startQuiz('greetings')">Try Again</button>`;
+        const score = currentQuizCorrect;
+        const total = currentQuiz.length;
+        const percentage = Math.round((score / total) * 100);
+        const emoji = percentage === 100 ? '🏆' : percentage >= 70 ? '🌟' : '💪';
+        const message = percentage === 100 ? 'Perfect! You are amazing!' : percentage >= 70 ? 'Great job! Keep it up!' : percentage >= 50 ? 'Good effort! Practice more!' : 'Keep learning! You can do it!';
+        
+        document.getElementById('quiz-question').innerHTML = `
+            <div class="quiz-complete">
+                <div class="quiz-complete-icon">${emoji}</div>
+                <div class="quiz-complete-title">Quiz Complete!</div>
+                <div class="quiz-complete-score">${score}/${total}</div>
+                <div class="quiz-complete-percent">${percentage}%</div>
+                <div class="quiz-complete-message">${message}</div>
+            </div>
+        `;
+        document.getElementById('quiz-options').innerHTML = `
+            <button class="new-quote-btn" onclick="startQuiz('${Object.keys(quizzes)[0]}')" style="margin: 8px;">Try Again</button>
+            <button class="new-quote-btn" onclick="backToLessons()" style="margin: 8px; background: linear-gradient(135deg, var(--lavender), var(--rose));">Back to Lessons</button>
+        `;
         document.getElementById('quiz-result').textContent = '';
+        document.getElementById('quiz-bar').style.width = '100%';
         
         quizzesTaken++;
         localStorage.setItem('farin_quizzes', quizzesTaken);
         updateProgress();
         
-        if (currentQuizCorrect === currentQuiz.length && !achievements.includes('perfect-score')) {
+        if (percentage === 100 && !achievements.includes('perfect-score')) {
             achievements.push('perfect-score');
             localStorage.setItem('farin_achievements', JSON.stringify(achievements));
             showAchievement('🌟 Perfect Score');
@@ -2327,7 +2801,13 @@ function loadJournalEntries() {
     const container = document.getElementById('journal-entries');
     const entries = JSON.parse(localStorage.getItem('farin_journal') || '[]');
     if (entries.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-light); text-align: center; padding: 20px;">No entries yet. Start writing! 💜</div>';
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <div class="empty-title">Your journal awaits</div>
+                <div class="empty-text">Start writing your first entry above. Every thought matters.</div>
+            </div>
+        `;
         return;
     }
     container.innerHTML = entries.map((entry, i) => {
@@ -2485,7 +2965,28 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
+// ===================== DARK MODE =====================
+function toggleDarkMode() {
+    const isDark = document.getElementById('dark-mode-toggle').checked;
+    if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+function loadTheme() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('dark-mode-toggle').checked = true;
+    }
+}
+
 // ===================== INIT =====================
+loadTheme();
 createFlowers();
 checkDailyVisit();
 newQuote();
@@ -2493,10 +2994,34 @@ checkBackendHealth();
 loadJournalEntries();
 loadReminders();
 updateHugCount();
-createFlowers();
-checkDailyVisit();
-newQuote();
-checkBackendHealth();
+updateGreeting();
+
+function updateGreeting() {
+    const hour = new Date().getHours();
+    const title = document.getElementById('greeting-title');
+    const subtitle = document.getElementById('greeting-subtitle');
+    
+    if (!title || !subtitle) return;
+    
+    let greeting, message;
+    
+    if (hour >= 5 && hour < 12) {
+        greeting = 'Good Morning, Farin';
+        message = 'A new day full of possibilities awaits';
+    } else if (hour >= 12 && hour < 17) {
+        greeting = 'Good Afternoon, Farin';
+        message = 'Take a moment to learn something new';
+    } else if (hour >= 17 && hour < 21) {
+        greeting = 'Good Evening, Farin';
+        message = 'Time to unwind and reflect';
+    } else {
+        greeting = 'Hello, Farin';
+        message = 'Wishing you peaceful dreams';
+    }
+    
+    title.textContent = greeting;
+    subtitle.textContent = message;
+}
 
 // Add slideDown animation
 const style = document.createElement('style');
